@@ -80,7 +80,7 @@ export default function Home() {
                         label="Status"
                     />
                     <Button variant="filled" color="green" type="submit">
-                        Button
+                        Create Task
                     </Button>
                 </form>
             </Box>
