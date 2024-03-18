@@ -1,6 +1,6 @@
 import * as requester from "./request"
 
-const BaseUrl = 'http://127.0.0.1:8080/'
+const BaseUrl = 'http://127.0.0.1:8888/'
 
 export const get_tasks = async () => requester.get(`${BaseUrl}tasks/`);
 

@@ -6,7 +6,19 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"time"
 )
+
+//  HTTP request Info
+
+type HTTPReqInfo struct {
+	method    string
+	uri       string
+	referer   string
+	ipaddr    string
+	code      int
+	userAgent string
+}
 
 // Base DB
 
@@ -23,14 +35,14 @@ var TaskID int64 = 0
 
 // Views
 
-func home(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprint(w, "Hello, World!")
-
-	fmt.Printf("status: %v Method: %v", r.Response.StatusCode, r.Method)
-
-}
-
 func displayTasks(w http.ResponseWriter, r *http.Request) {
+
+	request := &HTTPReqInfo{
+		method:    r.Method,
+		uri:       r.URL.String(),
+		referer:   r.Header.Get("Referer"),
+		userAgent: r.Header.Get("User-Agent"),
+	}
 
 	if r.Method == "GET" || r.Method == "OPTIONS" {
 		w.Header().Set("Access-Control-Allow-Origin", "*")
@@ -46,6 +58,10 @@ func displayTasks(w http.ResponseWriter, r *http.Request) {
 
 		}
 
+		request.code = http.StatusOK
+
+		fmt.Printf("%v: %v %v %v %v\n", time.Now().Format("2006-01-02 15:04:05"), request.uri, request.method, request.code, request.userAgent)
+
 		return
 
 	}
@@ -54,11 +70,18 @@ func displayTasks(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusMethodNotAllowed)
 	fmt.Fprintf(w, "Method not allowed!")
 
-	// fmt.Printf("tatus: %v Method: %v", r.Response.StatusCode, r.Method)
+	fmt.Printf("%v: %v %v %v %v\n", time.Now().Format("2006-01-02 15:04:05"), request.uri, request.method, request.code, request.userAgent)
 
 }
 
 func createTask(w http.ResponseWriter, r *http.Request) {
+
+	request := &HTTPReqInfo{
+		method:    r.Method,
+		uri:       r.URL.String(),
+		referer:   r.Header.Get("Referer"),
+		userAgent: r.Header.Get("User-Agent"),
+	}
 
 	if r.Method == "POST" || r.Method == "OPTIONS" {
 
@@ -84,8 +107,9 @@ func createTask(w http.ResponseWriter, r *http.Request) {
 		TaskID = task.ID
 
 		data = append(data, *task)
-
 		w.WriteHeader(http.StatusCreated)
+
+		fmt.Printf("%v: %v %v %v %v\n", time.Now().Format("2006-01-02 15:04:05"), request.uri, request.method, request.code, request.userAgent)
 
 		return
 	}
@@ -93,11 +117,18 @@ func createTask(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusMethodNotAllowed)
 	fmt.Fprintf(w, "Method not allowed!")
 
-	// fmt.Printf("Status: %v Method: %v", r.Response.StatusCode, r.Method)
+	fmt.Printf("%v: %v %v %v %v\n", time.Now().Format("2006-01-02 15:04:05"), request.uri, request.method, request.code, request.userAgent)
 
 }
 
 func modifyTask(w http.ResponseWriter, r *http.Request) {
+
+	request := &HTTPReqInfo{
+		method:    r.Method,
+		uri:       r.URL.String(),
+		referer:   r.Header.Get("Referer"),
+		userAgent: r.Header.Get("User-Agent"),
+	}
 
 	if r.Method == "POST" || r.Method == "OPTIONS" {
 
@@ -129,6 +160,9 @@ func modifyTask(w http.ResponseWriter, r *http.Request) {
 			if row.ID == intId {
 				row.Status_id = intStatus_id
 				json.NewEncoder(w).Encode(row)
+
+				fmt.Printf("%v: %v %v %v %v\n", time.Now().Format("2006-01-02 15:04:05"), request.uri, request.method, request.code, request.userAgent)
+
 				return
 			}
 
@@ -139,6 +173,8 @@ func modifyTask(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusMethodNotAllowed)
 	fmt.Fprintf(w, "Method not allowed!")
 
+	fmt.Printf("%v: %v %v %v %v\n", time.Now().Format("2006-01-02 15:04:05"), request.uri, request.method, request.code, request.userAgent)
+
 }
 
 func deleteTask(w http.ResponseWriter, r *http.Request) {
@@ -148,7 +184,6 @@ func deleteTask(w http.ResponseWriter, r *http.Request) {
 // Urls
 
 func urls() {
-	http.HandleFunc("/", home)
 	http.HandleFunc("/tasks/", displayTasks)
 	http.HandleFunc("/create_task/", createTask)
 	http.HandleFunc("/modify_task", modifyTask)
@@ -160,5 +195,5 @@ func urls() {
 func main() {
 
 	urls()
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	log.Fatal(http.ListenAndServe(":8888", nil))
 }
