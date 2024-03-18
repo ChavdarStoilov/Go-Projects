@@ -87,8 +87,8 @@ export default function Home() {
 
             <Table striped highlightOnHover withTableBorder withColumnBorders horizontalSpacing="xl" 
                 style={{
-                    width: "80%",
-                    margin: "0px 10%",
+                    width: "50%",
+                    margin: "0px auto",
                     boxShadow: "0px 0px 50px 8px rgba(0,0,0,0.1)",
                     padding: '8px',
                 }}
@@ -97,11 +97,12 @@ export default function Home() {
                     <Table.Tr>
                         <Table.Th>Status name</Table.Th>
                         <Table.Th>Status</Table.Th>
+                        <Table.Th></Table.Th>
                     </Table.Tr>
                 </Table.Thead>
                 <Table.Tbody>
                     {tasks && tasks.length > 0 && (
-                        <TableRows data={tasks} change={ChangeStatusHandler} />
+                        <TableRows data={tasks} change={ChangeStatusHandler} update={setTasks}/>
                     )}
                 </Table.Tbody>
             </Table>

@@ -141,14 +141,11 @@ func modifyTask(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		id := r.URL.Query().Get("id")
-		intId, err := strconv.ParseInt(id, 10, 64)
-		if err != nil {
-			fmt.Println(err)
-		}
+		action := r.URL.Query().Get("action")
 
-		status_id := r.URL.Query().Get("status_id")
-		intStatus_id, err := strconv.Atoi(status_id)
+		id := r.URL.Query().Get("id")
+
+		intId, err := strconv.ParseInt(id, 10, 64)
 		if err != nil {
 			fmt.Println(err)
 		}
@@ -158,7 +155,20 @@ func modifyTask(w http.ResponseWriter, r *http.Request) {
 			row := &data[i]
 
 			if row.ID == intId {
-				row.Status_id = intStatus_id
+				if action == "modify" {
+					status_id := r.URL.Query().Get("status_id")
+					intStatus_id, err := strconv.Atoi(status_id)
+					if err != nil {
+						fmt.Println(err)
+					}
+					row.Status_id = intStatus_id
+
+				} else if action == "delete" {
+					data = append(data[:i], data[i+1:]...)
+
+					fmt.Println(data)
+				}
+
 				json.NewEncoder(w).Encode(row)
 
 				fmt.Printf("%v: %v %v %v %v\n", time.Now().Format("2006-01-02 15:04:05"), request.uri, request.method, request.code, request.userAgent)
@@ -177,17 +187,12 @@ func modifyTask(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func deleteTask(w http.ResponseWriter, r *http.Request) {
-
-}
-
 // Urls
 
 func urls() {
 	http.HandleFunc("/tasks/", displayTasks)
 	http.HandleFunc("/create_task/", createTask)
 	http.HandleFunc("/modify_task", modifyTask)
-	http.HandleFunc("/delete_task", deleteTask)
 
 }
 

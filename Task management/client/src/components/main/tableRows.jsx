@@ -1,8 +1,9 @@
 import { Table } from "@mantine/core";
-import { NativeSelect, Pagination } from "@mantine/core";
+import { NativeSelect, Pagination, Button  } from "@mantine/core";
 import { useState } from "react";
+import * as api from "../../api/api.v1"
 
-export default function TableRows({ data, change }) {
+export default function TableRows({ data, change, update }) {
     const [activePage, setPage] = useState(1);
 
     function chunk(array, size) {
@@ -18,48 +19,59 @@ export default function TableRows({ data, change }) {
         data.map((row) => row),
         10
     );
-    
-    
+
+    const deleteHandler = (id) => {
+
+        api.deleteTask(parseInt(id))
+        .then((result) => {
+            if (result.status === 200) {
+                update(data.filter(task => task.id !== result.data.id));
+            };
+        })
+        .catch((err) => {
+            console.log(err);
+        });
+
+    }
+
     const items = Pages[activePage - 1].map((item) => (
         <Table.Tr key={item.id}>
             <Table.Td>{item.name}</Table.Td>
-            <Table.Td>
+            <Table.Td style={{
+                display: "flex",
+                justifyContent:"center",
+            }}>
                 <NativeSelect
                     data={[
-                        { label: "In process", value: 1 , },
+                        { label: "In process", value: 1 },
                         { label: "Running", value: 2 },
                         { label: "Done", value: 3 },
                     ]}
                     value={item.status_id}
                     onChange={(e) => change(item.id, e.currentTarget.value)}
+                    style={{
+                        width: "120px",
+                    }}
                 />
+            </Table.Td>
+            <Table.Td style={{
+                textAlign: "center",
+            }}>
+                <Button
+                    variant="outline"
+                    color="rgba(255, 0, 0, 1)"
+                    radius="xl"
+                    onClick={() => deleteHandler(item.id)}
+                >
+                    Delete
+                </Button>
             </Table.Td>
         </Table.Tr>
     ));
 
-
     return (
         <>
             {items}
-            {/* {data &&
-                data.map((row) => (
-                    <Table.Tr key={row.id}>
-                        <Table.Td>{row.name}</Table.Td>
-                        <Table.Td>
-                            <NativeSelect
-                                data={[
-                                    { label: "In process", value: 1 },
-                                    { label: "Running", value: 2 },
-                                    { label: "Done", value: 3 },
-                                ]}
-                                value={row.status_id}
-                                onChange={(e) =>
-                                    change(row.id, e.currentTarget.value)
-                                }
-                            />
-                        </Table.Td>
-                    </Table.Tr>
-                ))} */}
             <Pagination
                 total={Pages.length}
                 value={activePage}
