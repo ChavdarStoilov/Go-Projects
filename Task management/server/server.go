@@ -107,6 +107,8 @@ func createTask(w http.ResponseWriter, r *http.Request) {
 		TaskID = task.ID
 
 		data = append(data, *task)
+
+		json.NewEncoder(w).Encode(task)
 		w.WriteHeader(http.StatusCreated)
 
 		fmt.Printf("%v: %v %v %v %v\n", time.Now().Format("2006-01-02 15:04:05"), request.uri, request.method, request.code, request.userAgent)
@@ -166,7 +168,6 @@ func modifyTask(w http.ResponseWriter, r *http.Request) {
 				} else if action == "delete" {
 					data = append(data[:i], data[i+1:]...)
 
-					fmt.Println(data)
 				}
 
 				json.NewEncoder(w).Encode(row)

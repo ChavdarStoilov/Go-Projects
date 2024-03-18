@@ -53,21 +53,24 @@ export default function Home() {
 
     return (
         <>
-        <h1 style={{
-            textAlign: 'center',
-            marginBottom: "30px",
-        }}>Task management</h1>
+            <h1
+                style={{
+                    textAlign: "center",
+                    marginBottom: "30px",
+                }}
+            >
+                Task management
+            </h1>
             <Box>
-                <form onSubmit={FormHandler} 
-                style={
-                    {
-                        display: "flex", 
+                <form
+                    onSubmit={FormHandler}
+                    style={{
+                        display: "flex",
                         alignItems: "end",
-                        justifyContent:"center",
-                        gap:"12px",
+                        justifyContent: "center",
+                        gap: "12px",
                         marginBottom: "30px",
-                    }
-                }
+                    }}
                 >
                     <TextInput label="Task name" name="name" />
                     <NativeSelect
@@ -85,12 +88,17 @@ export default function Home() {
                 </form>
             </Box>
 
-            <Table striped highlightOnHover withTableBorder withColumnBorders horizontalSpacing="xl" 
+            <Table
+                striped
+                highlightOnHover
+                withTableBorder
+                withColumnBorders
+                horizontalSpacing="xl"
                 style={{
                     width: "50%",
                     margin: "0px auto",
                     boxShadow: "0px 0px 50px 8px rgba(0,0,0,0.1)",
-                    padding: '8px',
+                    padding: "8px",
                 }}
             >
                 <Table.Thead>
@@ -101,8 +109,24 @@ export default function Home() {
                     </Table.Tr>
                 </Table.Thead>
                 <Table.Tbody>
-                    {tasks && tasks.length > 0 && (
-                        <TableRows data={tasks} change={ChangeStatusHandler} update={setTasks}/>
+                    {tasks && tasks.length > 0 ? (
+                        <TableRows
+                            data={tasks}
+                            change={ChangeStatusHandler}
+                            update={setTasks}
+                        />
+                    ) : (
+                        <Table.Tr>
+                            <Table.Td colSpan={4}>
+                                <h3
+                                    style={{
+                                        textAlign: "center",
+                                    }}
+                                >
+                                    There not have tasks!
+                                </h3>
+                            </Table.Td>
+                        </Table.Tr>
                     )}
                 </Table.Tbody>
             </Table>

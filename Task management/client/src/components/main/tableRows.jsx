@@ -21,7 +21,7 @@ export default function TableRows({ data, change, update }) {
     );
 
     const deleteHandler = (id) => {
-
+        console.log(id);
         api.deleteTask(parseInt(id))
         .then((result) => {
             if (result.status === 200) {
