@@ -21,6 +21,8 @@ export default function Home() {
     const FormHandler = (e) => {
         e.preventDefault();
 
+       const  form = e.target;
+
         const data = Object.fromEntries(new FormData(e.target));
 
         data["status_id"] = parseInt(data["status_id"]);
@@ -28,6 +30,7 @@ export default function Home() {
         api.create_task(data)
             .then((result) => {
                 console.log(result);
+                form.reset()
             })
             .catch((error) => console.log(error))
             .finally(() => {
