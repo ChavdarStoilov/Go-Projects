@@ -1,14 +1,14 @@
 # To do List for Invoice systems &#x2611;
 
 1. &#x2610; Create Database for the Invoice System
-    - &#x2610; Create table for Brand data
-    - &#x2610; Create table for Invoices
-    - &#x2610; Create table for Customers
+    - &#x2611; Create table for Brand data
+    - &#x2611; Create table for Invoices
+    - &#x2611; Create table for Customers
 2. &#x2610; Create the first page where the owner of the brand will input their data for the brand, which will be presented on the invoice. 
 3. &#x2610;  Create a Go REST API app for Invoices
     - &#x2610; Implement CRUD operations for Invoices
         - &#x2610; Implement REST API to create invoices in the database
-        - &#x2610; Implement REST API to read invoices from the database
+        - &#x2611; Implement REST API to read invoices from the database
         - &#x2610; Implement REST API to update invoices from the database
         - &#x2610; Implement REST API to Delete invoices from the database
 4. &#x2610; Create functionality in the front end (FE) for Invoices
@@ -19,7 +19,7 @@
 5. &#x2610; Create a Go REST API app for Customers
     - &#x2610; Implement CRUD operations for Customers
         - &#x2610; Implement REST API to create customers in the database
-        - &#x2610; Implement REST API to read customers from the database
+        - &#x2611; Implement REST API to read customers from the database
         - &#x2610; Implement REST API to update customers from the database
         - &#x2610; Implement REST API to Delete customers from the database
 6. &#x2610; Create functionality in the front end (FE) for Customers
