@@ -1,9 +1,12 @@
 package main
 
 import (
+	"database/sql"
 	"encoding/json"
 	"log"
 	"net/http"
+
+	_ "github.com/go-sql-driver/mysql"
 )
 
 type Invoice struct {
@@ -13,15 +16,22 @@ type Invoice struct {
 type InvoiceItems struct {
 	Invoice  Invoice `json:"invoice_id"`
 	ID       int     `json:"id"`
-	Item     string  `json:"item"`
+	Item     string  `json:"items"`
 	Quantity int     `json:"quantity"`
 	Price    float64 `json:"price"`
 	Amount   float64 `json:"amount"`
 }
 
-var invoices = []InvoiceItems{
-	{Invoice: Invoice{ID: 1}, ID: 1, Item: "Oil filter", Quantity: 1, Price: 20.10, Amount: 20.10},
-	{Invoice: Invoice{ID: 2}, ID: 1, Item: "Oil filter", Quantity: 1, Price: 20.10, Amount: 20.10},
+var db *sql.DB
+
+func connectDB() *sql.DB {
+	// Change username / password  / DB name
+	connectionString := "username:password@tcp(localhost:3306)/DB name"
+	db, err := sql.Open("mysql", connectionString)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return db
 }
 
 func DisplayAllInvoices(w http.ResponseWriter, r *http.Request) {
@@ -29,8 +39,28 @@ func DisplayAllInvoices(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 		w.Header().Set("Access-Control-Allow-Headers", "*")
 
+		db = connectDB()
+
+		rows, err := db.Query("SELECT * FROM Invoices;")
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		defer rows.Close()
+
+		var tempData []InvoiceItems
+		for rows.Next() {
+			var item InvoiceItems
+			if err := rows.Scan(&item.Invoice.ID, &item.ID, &item.Item, &item.Quantity, &item.Price, &item.Amount); err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+			}
+			tempData = append(tempData, item)
+		}
 		w.WriteHeader(http.StatusOK)
-		json.NewEncoder(w).Encode(invoices)
+		json.NewEncoder(w).Encode(tempData)
+
+		db.Close()
 
 	}
 }

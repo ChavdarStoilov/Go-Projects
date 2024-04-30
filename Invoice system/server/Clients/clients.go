@@ -1,35 +1,65 @@
 package main
 
 import (
+	"database/sql"
 	"encoding/json"
 	"log"
 	"net/http"
+
+	_ "github.com/go-sql-driver/mysql"
 )
 
 type Clients struct {
 	ID        int    `json:"id"`
-	FirstName string `json:"first name"`
-	LastName  string `json:"last name"`
+	FirstName string `json:"first_name"`
+	LastName  string `json:"last_name"`
 	Phone     string `json:"phone"`
 }
 
-var clients = []Clients{
-	{ID: 1, FirstName: "Blue", LastName: "Coltrane", Phone: "+359 888 112 424"},
-	{ID: 2, FirstName: "Jeru", LastName: "Mulligan", Phone: "+359 888 542 314"},
-	{ID: 3, FirstName: "Sarah", LastName: "Vaughan", Phone: "+359 888 416 214"},
+var db *sql.DB
+
+func connectDB() *sql.DB {
+	// Change username / password  / DB name
+	connectionString := "username:password@tcp(localhost:3306)/DB name"
+	db, err := sql.Open("mysql", connectionString)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return db
 }
 
 func DisplayAllClients(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
+		db = connectDB()
+
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 		w.Header().Set("Access-Control-Allow-Headers", "*")
-		w.WriteHeader(http.StatusOK)
-		json.NewEncoder(w).Encode(clients)
 
+		rows, err := db.Query("SELECT * FROM Clients;")
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		defer rows.Close()
+
+		var tempData []Clients
+		for rows.Next() {
+			var cli Clients
+			if err := rows.Scan(&cli.ID, &cli.FirstName, &cli.LastName, &cli.Phone); err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+			}
+			tempData = append(tempData, cli)
+		}
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(tempData)
+		db.Close()
 	}
+
 }
 
 func main() {
+
 	http.HandleFunc("/", DisplayAllClients)
 	log.Fatal(http.ListenAndServe(":8881", nil))
 }
