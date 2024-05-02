@@ -13,6 +13,7 @@ const request = async (method, url, data) => {
             builderRequest = fetch(url, {
                 headers: {
                     'Authorization': token,
+                    'Content-Type': 'application/json',
                 }
             });
         }
