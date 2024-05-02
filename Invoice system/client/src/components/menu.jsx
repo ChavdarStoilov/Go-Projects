@@ -14,12 +14,12 @@ export default function Menu() {
                 </li>
                 <li className="sidebar-list-item active">
                     <a href="#">
-                        <span>Products</span>
+                        <span>Invoices</span>
                     </a>
                 </li>
                 <li className="sidebar-list-item">
                     <a href="#">
-                        <span>Statistics</span>
+                        <span>Clients</span>
                     </a>
                 </li>
                 <li className="sidebar-list-item">

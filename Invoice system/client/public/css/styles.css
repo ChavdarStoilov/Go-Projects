@@ -120,11 +120,11 @@ body {
 
 
 .products-area-wrapper {
-  width: 100%;
+  width: 90%;
   max-height: 100%;
   overflow: auto;
   padding: 0 4px;
-  margin: 30px;
+  margin: 20px auto;
 
 }
 
@@ -186,20 +186,6 @@ body {
       &.stock { display: none; }
       &.price { flex: 0.4; }
     }}
-  }
-  
-  .sort-button {
-    padding: 0;
-    background-color: transparent;
-    border: none;
-    cursor: pointer;
-    color: var(--app-content-main-color);
-    margin-left: 4px;
-    display: flex;
-    align-items: center;
-    
-    &:hover { color: var(--action-color); }
-    svg { width: 12px; }
   }
   
   .cell-label {
