@@ -31,11 +31,17 @@ func connectDB() *sql.DB {
 
 func DisplayBrandData(w http.ResponseWriter, r *http.Request) {
 
-	if r.Method == "GET" {
-		db = connectDB()
+	if r.Method == "GET" || r.Method == "OPTIONS" {
+		w.Header().Add("Access-Control-Allow-Origin", "*")
+		w.Header().Add("Access-Control-Allow-Headers", "*")
 
-		w.Header().Set("Access-Control-Allow-Origin", "*")
-		w.Header().Set("Access-Control-Allow-Headers", "*")
+		if r.Method == "OPTIONS" {
+			w.WriteHeader(http.StatusOK)
+
+			return
+		}
+
+		db = connectDB()
 
 		rows, err := db.Query("SELECT * FROM BrandConfig;")
 		if err != nil {
@@ -56,6 +62,7 @@ func DisplayBrandData(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		json.NewEncoder(w).Encode(tempData)
 		db.Close()
+		return
 	}
 }
 
