@@ -2,9 +2,11 @@ import { useState, useEffect } from "react";
 import * as api from "../api/data.js";
 import Menu from "./menu.jsx";
 import AppContent from "./appContent.jsx";
+import { Tabs } from "@mantine/core";
 
 export default function HomePage() {
     const [brandData, setBrandData] = useState(false);
+    const [page, setPage] = useState("home");
 
     useEffect(() => {
         api.GetBrandData()
@@ -19,9 +21,9 @@ export default function HomePage() {
     }, []);
 
     return (
-        <main className="app-container">
+        <Tabs value={page} onChange={setPage} className="app-container">
             <Menu />
-            <AppContent />
-        </main>
+            <AppContent pageName={page} />
+        </Tabs>
     );
 }

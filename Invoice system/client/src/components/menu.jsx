@@ -1,38 +1,24 @@
+import { Tabs } from "@mantine/core";
+
 export default function Menu() {
     return (
-        <div className="sidebar">
+        <Tabs.List className="sidebar">
             <div className="sidebar-header">
                 <div className="app-icon">
-                   <h2 className="brand-name">Brand Name</h2>
+                    <h2 className="brand-name">Brand Name</h2>
                 </div>
             </div>
             <ul className="sidebar-list">
                 <li className="sidebar-list-item">
-                    <a href="#">
-                        <span>Home</span>
-                    </a>
+                    <Tabs.Tab value="home">Home</Tabs.Tab>
                 </li>
                 <li className="sidebar-list-item active">
-                    <a href="#">
-                        <span>Invoices</span>
-                    </a>
+                    <Tabs.Tab value="invoices">Invoices</Tabs.Tab>
                 </li>
                 <li className="sidebar-list-item">
-                    <a href="#">
-                        <span>Clients</span>
-                    </a>
-                </li>
-                <li className="sidebar-list-item">
-                    <a href="#">
-                        <span>Inbox</span>
-                    </a>
-                </li>
-                <li className="sidebar-list-item">
-                    <a href="#">
-                        <span>Notifications</span>
-                    </a>
+                    <Tabs.Tab value="clients">Clients</Tabs.Tab>
                 </li>
             </ul>
-        </div>
+        </Tabs.List>
     );
 }

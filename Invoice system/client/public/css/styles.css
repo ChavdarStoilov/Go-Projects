@@ -51,11 +51,12 @@ body {
   width: 100%;
   height: 100vh;
   max-width: 1280px;
-  display: flex;
+  display: flex !important;
   overflow: hidden;
   box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
   max-width: 2000px;
   margin: 0 auto;
+  
 }
 
 .sidebar {
@@ -97,11 +98,25 @@ body {
 
 .sidebar-list {
   list-style: none;
+  padding-left: 0px;
 }
 
-.sidebar-list-item a {
+.m_89d33d6d {
+  justify-content: center !important;
+}
+
+.m_539e827b {
+  border-width: 100% !important;
+
+}
+.sidebar-list-item button {
   text-decoration: none;
   color: #fff;
+
+}
+
+.sidebar-list-item button:hover {
+  background-color: unset !important;
 }
 
 .action-button {
