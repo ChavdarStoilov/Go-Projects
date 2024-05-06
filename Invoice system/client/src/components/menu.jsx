@@ -1,11 +1,11 @@
 import { Tabs } from "@mantine/core";
 
-export default function Menu() {
+export default function Menu({brand}) {
     return (
         <Tabs.List className="sidebar">
             <div className="sidebar-header">
                 <div className="app-icon">
-                    <h2 className="brand-name">Brand Name</h2>
+                    <h2 className="brand-name">{brand && brand}</h2>
                 </div>
             </div>
             <ul className="sidebar-list">

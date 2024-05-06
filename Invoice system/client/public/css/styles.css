@@ -102,13 +102,28 @@ body {
 }
 
 .m_89d33d6d {
-  justify-content: center !important;
+  display: unset !important;
+  flex-wrap: unset !important;
+  justify-content: unset !important;
+  gap: unset !important;
+  --tab-grow: unset !important;
+  justify-content: unset !important;
 }
 
 .m_539e827b {
   border-width: 100% !important;
 
 }
+
+.app-icon {
+  border-bottom: 1px solid #2080d4;
+}
+
+.sidebar-list-item {
+  margin: 4px 30%;
+
+}
+
 .sidebar-list-item button {
   text-decoration: none;
   color: #fff;
@@ -117,6 +132,7 @@ body {
 
 .sidebar-list-item button:hover {
   background-color: unset !important;
+
 }
 
 .action-button {

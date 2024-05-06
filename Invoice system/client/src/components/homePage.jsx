@@ -22,8 +22,8 @@ export default function HomePage() {
 
     return (
         <Tabs value={page} onChange={setPage} className="app-container">
-            <Menu />
-            <AppContent pageName={page} />
+            <Menu brand={brandData ? brandData[0].name : false} />
+            <AppContent pageName={page} brand={brandData} />
         </Tabs>
     );
 }

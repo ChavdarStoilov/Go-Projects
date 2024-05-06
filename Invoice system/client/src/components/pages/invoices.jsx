@@ -1,7 +1,7 @@
 import { Badge } from '@mantine/core';
 
 
-export default function Invoices() {
+export default function Invoices({data}) {
     return (
         <div className="products-area-wrapper tableView">
             <div className="products-header">
