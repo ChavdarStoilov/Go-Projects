@@ -1,5 +1,6 @@
-import { act, useState } from "react";
-import { Stepper, Button, Group, Box, TextInput } from "@mantine/core";
+import { useState } from "react";
+import { useForm, isNotEmpty, isEmail, hasLength } from "@mantine/form";
+import { Stepper, Button, Group, TextInput } from "@mantine/core";
 
 export default function NewBeandCreations() {
     const [active, setActive] = useState(0);
@@ -7,28 +8,67 @@ export default function NewBeandCreations() {
     const [nextStepBtton, setNextStepButton] = useState(false);
     const [loading, setLoading] = useState(false);
     const [showData, setShowData] = useState(false);
+    const [errors, setErrors] = useState({});
+    const validator = {
+        brand: useForm({
+            mode: "uncontrolled",
+            initialValues: {
+                name: "",
+            },
 
-    const nextStep = (e) => {
-        setActive((current) => (current < 3 ? current + 1 : current));
-        FormDetails(e);
+            validate: {
+                name: hasLength(
+                    { min: 2, max: 10 },
+                    "Name must be 2-10 characters long"
+                ),
+                name: isNotEmpty("Name must not be empty!"),
+            },
+        }),
 
-        if (active === 2) {
-            setNextStepButton(e.target);
-            setLoading(true);
-            e.target.offsetParent.disabled = true;
+        owner: useForm({
+            mode: "uncontrolled",
+            initialValues: {
+                firstName: "",
+                lastName: "",
+            },
 
-            setTimeout(() => {
-                setLoading(false);
-                e.target.textContent = "Save Data";
-                e.target.offsetParent.disabled = false;
-                e.target.offsetParent.style.backgroundColor = "green";
+            validate: {
+                firstName: hasLength(
+                    { min: 2, max: 10 },
+                    "First Name must be 2-10 characters long"
+                ),
+                firstName: isNotEmpty("First Name must not be empty!"),
+                lastName: hasLength(
+                    { min: 2, max: 10 },
+                    "Last Name must be 2-10 characters long"
+                ),
+                lastName: isNotEmpty("Last Name must not be empty!"),
+            },
+        }),
+        contancts: useForm({
+            mode: "uncontrolled",
+            initialValues: {
+                address: "",
+                mail: "",
+            },
 
-                setShowData(true);
-            }, 2000);
-        } else if (active === 3) {
-            console.log(formData);
-        }
+            validate: {
+                address: hasLength(
+                    { min: 2, max: 30 },
+                    "Address must be 2-30 characters long"
+                ),
+                address: isNotEmpty("Address must not be empty!"),
+                mail: hasLength(
+                    { min: 2, max: 10 },
+                    "Mail must be 2-10 characters long"
+                ),
+                mail: isNotEmpty("Mail must not be empty!"),
+                mail: isEmail("Invalid email"),
+            },
+        }),
     };
+
+
     const prevStep = () => {
         if (active === 3) {
             nextStepBtton.textContent = "Next step";
@@ -48,18 +88,35 @@ export default function NewBeandCreations() {
                     .previousElementSibling.lastChild.children[0];
 
             if (form.tagName === "FORM") {
-                if (form.checkValidity() === true) {
-                    const data = Object.fromEntries(new FormData(form));
-
+                const data = Object.fromEntries(new FormData(form));
+                if (!validator[form.id].validate(data).hasErrors) {
                     setFormData({
                         ...formData, // Copy the old fields
                         ...data, // But override this one
                     });
                     form.reset();
+                    setActive((current) =>
+                        current < 3 ? current + 1 : current
+                    );
+                    if (active === 2 && errors) {
+                        setNextStepButton(e.target);
+                        setLoading(true);
+                        e.target.offsetParent.disabled = true;
+
+                        setTimeout(() => {
+                            setLoading(false);
+                            e.target.textContent = "Save Data";
+                            e.target.offsetParent.disabled = false;
+                            e.target.offsetParent.style.backgroundColor =
+                                "green";
+
+                            setShowData(true);
+                        }, 2000);
+                    } else if (active === 3) {
+                        console.log(formData);
+                    }
                 }
-                else {
-                    e.target.offsetParent.disabled = false;
-                }
+                setErrors(validator[form.id].validate(data).errors);
             }
         }
     };
@@ -77,12 +134,15 @@ export default function NewBeandCreations() {
                     style={{ color: "white" }}
                     allowStepSelect={false}
                 >
-                    <form style={{ margin: "20px 150px" }}>
+                    <form style={{ margin: "20px 150px" }} id="brand">
                         <TextInput
                             label="Enter name of brand:"
                             style={{ color: "white" }}
                             name="name"
                             required
+                            key={validator["brand"].key("name")}
+                            {...validator["brand"].getInputProps("name")}
+                            error={errors["name"] ? errors["name"] : false}
                         />
                     </form>
                 </Stepper.Step>
@@ -92,18 +152,30 @@ export default function NewBeandCreations() {
                     description="Owner details!"
                     style={{ color: "white" }}
                 >
-                    <form style={{ margin: "20px 150px" }}>
+                    <form style={{ margin: "20px 150px" }} id="owner">
                         <TextInput
                             label="Enter first name of owner:"
                             style={{ color: "white" }}
                             name="firstName"
                             required
+                            error={
+                                errors["firstName"]
+                                    ? errors["firstName"]
+                                    : false
+                            }
+                            key={validator["owner"].key("firstName")}
+                            {...validator["owner"].getInputProps("firstName")}
                         />
                         <TextInput
                             label="Enter secont name of owner:"
                             style={{ color: "white" }}
                             name="lastName"
                             required
+                            error={
+                                errors["lastName"] ? errors["lastName"] : false
+                            }
+                            key={validator["owner"].key("lastName")}
+                            {...validator["owner"].getInputProps("lastName")}
                         />
                     </form>
                 </Stepper.Step>
@@ -114,12 +186,17 @@ export default function NewBeandCreations() {
                     loading={loading}
                     allowStepSelect={false}
                 >
-                    <form style={{ margin: "20px 150px" }}>
+                    <form style={{ margin: "20px 150px" }} id="contancts">
                         <TextInput
                             label="Enter Address:"
                             style={{ color: "white" }}
                             name="address"
                             required
+                            error={
+                                errors["address"] ? errors["address"] : false
+                            }
+                            key={validator["contancts"].key("address")}
+                            {...validator["contancts"].getInputProps("address")}
                         />
                         <TextInput
                             label="Enter Mail:"
@@ -127,6 +204,9 @@ export default function NewBeandCreations() {
                             name="mail"
                             required
                             type="email"
+                            error={errors["mail"] ? errors["mail"] : false}
+                            key={validator["contancts"].key("mail")}
+                            {...validator["contancts"].getInputProps("mail")}
                         />
                     </form>
                 </Stepper.Step>
@@ -156,7 +236,7 @@ export default function NewBeandCreations() {
                 <Button variant="default" onClick={prevStep}>
                     Back
                 </Button>
-                <Button onClick={nextStep}>Next step</Button>
+                <Button onClick={FormDetails}>Next step</Button>
             </Group>
         </>
     );
