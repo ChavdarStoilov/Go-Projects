@@ -9,15 +9,15 @@ export default function HomePage() {
     const [page, setPage] = useState("home");
 
     useEffect(() => {
-        api.GetBrandData()
-            .then((result) => {
-                if (result.status === 200 && result.data !== null) {
-                    setBrandData(result.data);
-                }
-            })
-            .catch((error) => {
-                console.log(error);
-            });
+        // api.GetBrandData()
+        //     .then((result) => {
+        //         if (result.status === 200 && result.data !== null) {
+        //             setBrandData(result.data);
+        //         }
+        //     })
+        //     .catch((error) => {
+        //         console.log(error);
+        //     });
     }, []);
 
     return (

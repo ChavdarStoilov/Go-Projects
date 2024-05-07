@@ -115,6 +115,12 @@ body {
 
 }
 
+.m_cbb4ea7e  {
+  display: flex;
+  flex-direction: column-reverse;
+  text-align: center;
+}
+
 .app-icon {
   border-bottom: 1px solid #2080d4;
 }

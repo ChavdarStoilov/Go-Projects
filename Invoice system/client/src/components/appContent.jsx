@@ -1,6 +1,7 @@
 import { Button } from "@mantine/core";
 import Invoices from "./pages/invoices";
 import { Tabs } from "@mantine/core";
+import NewBeandCreations from "./pages/newBrandCreation";
 
 export default function AppContent({ pageName, brand }) {
     return (
@@ -14,7 +15,7 @@ export default function AppContent({ pageName, brand }) {
                 )}
             </div>
             <Tabs.Panel value="home">{
-                brand ? "Home page"  : "New Brand"
+                brand ? "Home page"  : <NewBeandCreations/>
             }</Tabs.Panel>
             <Tabs.Panel value="invoices">
                 <Invoices/>
