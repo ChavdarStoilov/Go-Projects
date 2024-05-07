@@ -7,7 +7,7 @@ export default function AppContent({ pageName, brand }) {
     return (
         <div className="app-content">
             <div className="app-content-header">
-                <h1 className="app-content-headerText">{pageName}</h1>
+                <h1 className="app-content-headerText">{!brand && pageName == "home"? "Creation new brand" : pageName}</h1>
                 {pageName === "invoices" && (
                     <Button variant="light" radius="lg">
                         Add Invoice
