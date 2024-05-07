@@ -15,14 +15,13 @@ export default function Invoices({ data }) {
                     <span>0000001</span>
                 </div>
                 <div className="product-cell status-cell">
-                    <span className="cell-label">Status:</span>
                     <Badge variant="dot" color="green" size="md">
                         Active
                     </Badge>
                 </div>
 
                 <div className="product-cell price">
-                    <span className="cell-label">Price:</span><NumberFormatter value={100000} suffix=" лв." thousandSeparator />
+                    <NumberFormatter value={100000} suffix=" лв." thousandSeparator />
                 </div>
 
                 <div className="product-cell">
