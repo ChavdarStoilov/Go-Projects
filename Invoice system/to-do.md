@@ -4,7 +4,7 @@
     - &#x2611; Create table for Brand data
     - &#x2611; Create table for Invoices
     - &#x2611; Create table for Customers
-2. &#x2610; Create the first page where the owner of the brand will input their data for the brand, which will be presented on the invoice. 
+2. &#x2611; Create the first page where the owner of the brand will input their data for the brand, which will be presented on the invoice. 
 3. &#x2610;  Create a Go REST API app for Invoices
     - &#x2610; Implement CRUD operations for Invoices
         - &#x2610; Implement REST API to create invoices in the database
