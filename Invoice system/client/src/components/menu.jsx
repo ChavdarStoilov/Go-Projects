@@ -1,6 +1,6 @@
 import { Tabs } from "@mantine/core";
 
-export default function Menu({brand}) {
+export default function Menu({ brand }) {
     return (
         <Tabs.List className="sidebar">
             <div className="sidebar-header">
@@ -12,12 +12,16 @@ export default function Menu({brand}) {
                 <li className="sidebar-list-item">
                     <Tabs.Tab value="home">Home</Tabs.Tab>
                 </li>
-                <li className="sidebar-list-item active">
-                    <Tabs.Tab value="invoices">Invoices</Tabs.Tab>
-                </li>
-                <li className="sidebar-list-item">
-                    <Tabs.Tab value="clients">Clients</Tabs.Tab>
-                </li>
+                {brand && (
+                    <>
+                        <li className="sidebar-list-item active">
+                            <Tabs.Tab value="invoices">Invoices</Tabs.Tab>
+                        </li>
+                        <li className="sidebar-list-item">
+                            <Tabs.Tab value="clients">Clients</Tabs.Tab>
+                        </li>
+                    </>
+                )}
             </ul>
         </Tabs.List>
     );
