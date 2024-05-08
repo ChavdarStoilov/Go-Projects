@@ -22,6 +22,16 @@ type InvoiceItems struct {
 	Amount   float64 `json:"amount"`
 }
 
+type InvoiceFromDB struct {
+	ID        int     `json:"id"`
+	Item      string  `json:"items"`
+	Quantity  int     `json:"quantity"`
+	Status    string  `json:"status"`
+	FirstName string  `json:"first_name"`
+	LastName  string  `json:"last_name"`
+	Amount    float64 `json:"amount"`
+}
+
 var db *sql.DB
 
 func connectDB() *sql.DB {
@@ -35,13 +45,23 @@ func connectDB() *sql.DB {
 }
 
 func DisplayAllInvoices(w http.ResponseWriter, r *http.Request) {
-	if r.Method == "GET" {
-		w.Header().Set("Access-Control-Allow-Origin", "*")
-		w.Header().Set("Access-Control-Allow-Headers", "*")
+	if r.Method == "GET" || r.Method == "OPTIONS" {
+		w.Header().Add("Access-Control-Allow-Origin", "*")
+		w.Header().Add("Access-Control-Allow-Headers", "*")
+
+		if r.Method == "OPTIONS" {
+			w.WriteHeader(http.StatusOK)
+			return
+		}
 
 		db = connectDB()
 
-		rows, err := db.Query("SELECT * FROM Invoices;")
+		rows, err := db.Query(`
+			select t.ID, t.Items, t.Quantity, t.Amount, s.status, c.first_name, c.last_name 
+		 	from Invoices t 
+		 	Inner join status_type s on t.status = s.id 
+		 	Inner join Clients c on t.owner = c.id;
+		`)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -49,10 +69,10 @@ func DisplayAllInvoices(w http.ResponseWriter, r *http.Request) {
 
 		defer rows.Close()
 
-		var tempData []InvoiceItems
+		var tempData []InvoiceFromDB
 		for rows.Next() {
-			var item InvoiceItems
-			if err := rows.Scan(&item.Invoice.ID, &item.ID, &item.Item, &item.Quantity, &item.Price, &item.Amount); err != nil {
+			var item InvoiceFromDB
+			if err := rows.Scan(&item.ID, &item.Item, &item.Quantity, &item.Amount, &item.Status, &item.FirstName, &item.LastName); err != nil {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 			}
 			tempData = append(tempData, item)
