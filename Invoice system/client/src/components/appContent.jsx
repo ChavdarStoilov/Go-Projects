@@ -3,7 +3,7 @@ import Invoices from "./pages/invoices";
 import { Tabs } from "@mantine/core";
 import NewBeandCreations from "./pages/newBrandCreation";
 
-export default function AppContent({ pageName, brand }) {
+export default function AppContent({ pageName, brand, addData }) {
     return (
         <div className="app-content">
             <div className="app-content-header">
@@ -15,7 +15,7 @@ export default function AppContent({ pageName, brand }) {
                 )}
             </div>
             <Tabs.Panel value="home">{
-                brand ? "Home page"  : <NewBeandCreations/>
+                brand ? "Home page"  : <NewBeandCreations addData={addData}/>
             }</Tabs.Panel>
             <Tabs.Panel value="invoices">
                 <Invoices/>

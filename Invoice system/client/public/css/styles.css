@@ -335,6 +335,7 @@ body {
   height: 400px;
   box-shadow: 6px 0px 22px -3px rgb(34, 139, 230, 1);
   padding-top: unset !important;
+  width: 50%
 }
 
 .m_78da155d form {

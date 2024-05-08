@@ -12,3 +12,8 @@ export const GetAllClients = async () => request.get(ClientsBaseUrl);
 
 export const GetAllInvoices = async () => request.get(InvoiceBaseUrl);
 
+
+// Create in db
+
+export const CreateBrandData = async (data) => request.post(`${BrandBaseUrl}create/`, data)
+

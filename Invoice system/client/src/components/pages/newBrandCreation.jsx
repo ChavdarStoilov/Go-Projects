@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { useForm, isNotEmpty, isEmail, hasLength } from "@mantine/form";
 import { Stepper, Button, Group, TextInput } from "@mantine/core";
+import * as api from "../../api/data";
 
-export default function NewBeandCreations() {
+export default function NewBeandCreations({addData}) {
     const [active, setActive] = useState(0);
     const [formData, setFormData] = useState({});
     const [nextStepBtton, setNextStepButton] = useState(false);
@@ -67,7 +68,7 @@ export default function NewBeandCreations() {
             },
         }),
     };
-
+    const [loadingPOST, setLoadingPOST] = useState(false);
 
     const prevStep = () => {
         if (active === 3) {
@@ -88,7 +89,15 @@ export default function NewBeandCreations() {
                     .previousElementSibling.lastChild.children[0];
 
             if (form.tagName === "FORM") {
-                const data = Object.fromEntries(new FormData(form));
+                var data;
+                data = Object.fromEntries(new FormData(form));
+
+                if (form.id == "owner") {
+                    data = {
+                        Owner: `${data["firstName"]} ${data["lastName"]}`,
+                    };
+                }
+
                 if (!validator[form.id].validate(data).hasErrors) {
                     setFormData({
                         ...formData, // Copy the old fields
@@ -98,25 +107,35 @@ export default function NewBeandCreations() {
                     setActive((current) =>
                         current < 3 ? current + 1 : current
                     );
-                    if (active === 2 && errors) {
-                        setNextStepButton(e.target);
-                        setLoading(true);
-                        e.target.offsetParent.disabled = true;
-
-                        setTimeout(() => {
-                            setLoading(false);
-                            e.target.textContent = "Save Data";
-                            e.target.offsetParent.disabled = false;
-                            e.target.offsetParent.style.backgroundColor =
-                                "green";
-
-                            setShowData(true);
-                        }, 2000);
-                    } else if (active === 3) {
-                        console.log(formData);
-                    }
                 }
                 setErrors(validator[form.id].validate(data).errors);
+            }
+
+            if (active === 2 && errors) {
+                setNextStepButton(e.target);
+                setLoading(true);
+                e.target.offsetParent.disabled = true;
+
+                setTimeout(() => {
+                    setLoading(false);
+                    e.target.textContent = "Save Data";
+                    e.target.offsetParent.disabled = false;
+                    e.target.offsetParent.style.backgroundColor = "green";
+
+                    setShowData(true);
+                }, 2000);
+            } else if (active === 3) {
+                setLoadingPOST(true);
+                api.CreateBrandData(formData)
+                    .then((result) => {
+                        if (result.status === 200) {
+                            addData()
+                        }
+                    })
+                    .catch((e) => console.log(e))
+                    .finally(() => {
+                        setLoadingPOST(false);
+                    });
             }
         }
     };
@@ -221,10 +240,7 @@ export default function NewBeandCreations() {
                             }}
                         >
                             <p>Brand: {formData.name}</p>
-                            <p>
-                                Owner names: {formData.firstName}{" "}
-                                {formData.lastName}
-                            </p>
+                            <p>Owner names: {formData.Owner}</p>
                             <p>Brand Address: {formData.address}</p>
                             <p>Mail: {formData.mail}</p>
                         </div>
@@ -236,7 +252,13 @@ export default function NewBeandCreations() {
                 <Button variant="default" onClick={prevStep}>
                     Back
                 </Button>
-                <Button onClick={FormDetails}>Next step</Button>
+                <Button
+                    onClick={FormDetails}
+                    loading={loadingPOST}
+                    loaderProps={{ type: "dots" }}
+                >
+                    Next step
+                </Button>
             </Group>
         </>
     );
