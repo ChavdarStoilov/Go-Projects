@@ -17,3 +17,6 @@ export const GetAllInvoices = async () => request.get(InvoiceBaseUrl);
 
 export const CreateBrandData = async (data) => request.post(`${BrandBaseUrl}create/`, data)
 
+export const CreateNewInvoice = async (data) => request.post(`${InvoiceBaseUrl}create/`, data)
+
+

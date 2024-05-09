@@ -8,7 +8,7 @@ export default function TableNewInvoieItem({ data, remove }) {
     };
     const rows = data.map((element, key) => (
         <Table.Tr key={key}>
-            <Table.Td>{element.item}</Table.Td>
+            <Table.Td>{element.items}</Table.Td>
             <Table.Td>{element.quantity}</Table.Td>
             <Table.Td>{element.price}</Table.Td>
             <Table.Td>{element.amount}</Table.Td>

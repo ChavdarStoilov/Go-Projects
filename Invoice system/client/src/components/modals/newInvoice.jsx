@@ -14,7 +14,7 @@ export default function NewInvoiceModal({ open, close }) {
 
     }
 
-    const CreateNewInvoice = (event) => {
+    const AddNewInvoice = (event) => {
         event.preventDefault();
 
         const form = event.target;
@@ -31,18 +31,30 @@ export default function NewInvoiceModal({ open, close }) {
         form.reset();
     };
 
+    
+    const CreateNewInvoice = () => {
+
+        api.CreateNewInvoice(invoice)
+        .then((result) => {
+            console.log(result);
+        })
+        .catch((err) => {
+            console.log(result);
+        })
+    }
+
     return (
         <>
             <Modal opened={open} onClose={close} title="New Invoice">
                 <TableNewInvoieItem data={invoice} remove={removeInvoice} />
 
-                <form onSubmit={CreateNewInvoice}>
+                <form onSubmit={AddNewInvoice}>
                     <TextInput
                         radius="md"
                         label="Item"
                         placeholder="Enter a name of item"
                         required
-                        name="item"
+                        name="items"
                     />
                     <NumberInput
                         label="Quantity"
@@ -72,7 +84,8 @@ export default function NewInvoiceModal({ open, close }) {
                         <Button
                             loading={loading}
                             loaderProps={{ type: "dots" }}
-                            onClick={() => console.log(invoice)}
+                            onClick={CreateNewInvoice}
+                            disabled={invoice.length <= 0}
                         >
                             Create
                         </Button>
