@@ -3,23 +3,19 @@ package main
 import (
 	"database/sql"
 	"encoding/json"
+	"io"
 	"log"
 	"net/http"
 
 	_ "github.com/go-sql-driver/mysql"
 )
 
-type Invoice struct {
-	ID int `json:"id"`
-}
-
 type InvoiceItems struct {
-	Invoice  Invoice `json:"invoice_id"`
-	ID       int     `json:"id"`
 	Item     string  `json:"items"`
 	Quantity int     `json:"quantity"`
 	Price    float64 `json:"price"`
 	Amount   float64 `json:"amount"`
+	Status   int     `json:"status"`
 }
 
 type InvoiceFromDB struct {
@@ -85,9 +81,41 @@ func DisplayAllInvoices(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func CraeteNewInvoice(w http.ResponseWriter, r *http.Request) {
+	if r.Method == "POST" || r.Method == "OPTIONS" {
+		w.Header().Add("Access-Control-Allow-Origin", "*")
+		w.Header().Add("Access-Control-Allow-Headers", "*")
+		w.Header().Set("Content-Type", "application/json")
+
+		if r.Method == "OPTIONS" {
+			w.WriteHeader(http.StatusOK)
+			return
+		}
+
+		var data []InvoiceItems
+		body, err := io.ReadAll(r.Body)
+
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		errJson := json.Unmarshal(body, &data)
+
+		if errJson != nil {
+			http.Error(w, errJson.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(data)
+	}
+}
+
 func main() {
 
 	http.HandleFunc("/", DisplayAllInvoices)
+	http.HandleFunc("/create/", CraeteNewInvoice)
 
 	log.Fatal(http.ListenAndServe(":8883", nil))
 }
