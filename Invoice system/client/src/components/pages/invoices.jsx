@@ -1,9 +1,14 @@
 import { useEffect, useState } from "react";
 import { Badge, Button, NumberFormatter } from "@mantine/core";
+import NewInvoiceModal from "../modals/newInvoice";
 import * as api from "../../api/data";
 
 export default function Invoices() {
     const [invoiceData, setInvoiceData] = useState({});
+    const [openNewInvoice, setOpenNewInvoice] = useState(false);
+
+    const openNewInvoiceHander = () => setOpenNewInvoice(true);
+    const closeNewInvoiceHander = () => setOpenNewInvoice(false);
 
     useEffect(() => {
         api.GetAllInvoices()
@@ -19,9 +24,10 @@ export default function Invoices() {
 
     return (
         <>
+            {openNewInvoice && <NewInvoiceModal open={openNewInvoice} close={closeNewInvoiceHander}/>}
             <div className="app-content-header">
                 <h1>Invoices</h1>
-                <Button variant="filled">Add New Invoice</Button>
+                <Button variant="filled" onClick={openNewInvoiceHander}>Add New Invoice</Button>
             </div>
             <div className="products-area-wrapper tableView">
                 <div className="products-header">
