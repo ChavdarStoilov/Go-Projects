@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -93,6 +94,7 @@ func CraeteNewInvoice(w http.ResponseWriter, r *http.Request) {
 		}
 
 		var data []InvoiceItems
+
 		body, err := io.ReadAll(r.Body)
 
 		if err != nil {
@@ -107,8 +109,33 @@ func CraeteNewInvoice(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		w.WriteHeader(http.StatusOK)
+		var sql = "Insert into Invoices (Items, Quantity, Price , status, Amount, owner) values "
+
+		for item := range data {
+			var sing string
+			if item+1 == len(data) {
+				sing = ";"
+			} else {
+				sing += ","
+			}
+			sql += fmt.Sprintf("('%v', %d, %f, %d, %f, %d)%v", data[item].Item, data[item].Quantity, data[item].Price, data[item].Status, data[item].Amount, 1, sing)
+		}
+
+		fmt.Println(sql)
+
+		db = connectDB()
+
+		rows, errSql := db.Query(sql)
+
+		if errSql != nil {
+			http.Error(w, errSql.Error(), http.StatusInternalServerError)
+			return
+		}
+		defer rows.Close()
 		json.NewEncoder(w).Encode(data)
+		w.WriteHeader(http.StatusCreated)
+
+		return
 	}
 }
 
