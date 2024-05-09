@@ -8,6 +8,12 @@ export default function NewInvoiceModal({ open, close }) {
     const [loading, setLoading] = useState(false);
     const [invoice, setInvoice] = useState([]);
 
+    const removeInvoice = (row) => {
+
+        setInvoice((invoice) => invoice.filter( item => item !== row));
+
+    }
+
     const CreateNewInvoice = (event) => {
         event.preventDefault();
 
@@ -15,7 +21,10 @@ export default function NewInvoiceModal({ open, close }) {
 
         const data = Object.fromEntries(new FormData(form));
 
-        data["amount"] = parseInt(data["price"]) * parseInt(data["quantity"]);
+        data["price"] = parseFloat(data["price"]);
+        data["quantity"] = parseInt(data["quantity"])
+        data['status']= parseInt(data["status"])
+        data["amount"] = data["price"]* data["quantity"];
 
         setInvoice((invoice) => [...invoice, data]);
 
@@ -25,7 +34,7 @@ export default function NewInvoiceModal({ open, close }) {
     return (
         <>
             <Modal opened={open} onClose={close} title="New Invoice">
-                <TableNewInvoieItem data={invoice} />
+                <TableNewInvoieItem data={invoice} remove={removeInvoice} />
 
                 <form onSubmit={CreateNewInvoice}>
                     <TextInput

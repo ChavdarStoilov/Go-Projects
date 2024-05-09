@@ -1,6 +1,6 @@
 import { Table, Badge } from "@mantine/core";
 
-export default function TableNewInvoieItem({ data }) {
+export default function TableNewInvoieItem({ data, remove }) {
     const Statuses = {
         1: ["Active", "yellow"],
         2: ["Completed", "green"],
@@ -21,12 +21,15 @@ export default function TableNewInvoieItem({ data }) {
                     {Statuses[element.status][0]}
                 </Badge>
             </Table.Td>
+            <Table.Td>
+                <p style={{cursor: "pointer", color: "Red"}} onClick={() => remove(data[key])}>x</p>
+            </Table.Td>
         </Table.Tr>
     ));
 
     return (
         <>
-            <Table striped highlightOnHover >
+            <Table striped highlightOnHover>
                 <Table.Thead>
                     <Table.Tr>
                         <Table.Th>Item</Table.Th>
@@ -34,6 +37,7 @@ export default function TableNewInvoieItem({ data }) {
                         <Table.Th>Price</Table.Th>
                         <Table.Th>Amount</Table.Th>
                         <Table.Th>Status</Table.Th>
+                        <Table.Th></Table.Th>
                     </Table.Tr>
                 </Table.Thead>
                 <Table.Tbody>{rows}</Table.Tbody>
