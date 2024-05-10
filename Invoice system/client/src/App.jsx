@@ -5,6 +5,7 @@ import "@mantine/core/styles.css";
 import { useState, useEffect } from "react";
 import * as api from "./api/data";
 import Invoices from "./components/pages/invoices";
+import Clients from "./components/pages/clients";
 import NewBeandCreations from "./components/pages/newBrandCreation";
 import Menu from "./components/menu";
 
@@ -45,7 +46,7 @@ function App() {
                         }
                     />
                     <Route exact path="invoices/" element={<Invoices />} />
-                    {/* <Route exact path="clients/" element={<Invoices />} /> */}
+                    <Route exact path="clients/" element={<Clients />} />
                 </Routes>
             </div>
         </MantineProvider>
