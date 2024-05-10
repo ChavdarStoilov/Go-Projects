@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
-import { Badge, Button, NumberFormatter } from "@mantine/core";
+import { Button } from "@mantine/core";
 import NewInvoiceModal from "../modals/newInvoice";
+import InvoiceItemsTable from "../utilsComponents/invoiceItemsTable";
 import * as api from "../../api/data";
+
 
 export default function Invoices() {
     const [invoiceData, setInvoiceData] = useState({});
@@ -38,36 +40,7 @@ export default function Invoices() {
                     <div className="product-cell price"></div>
                 </div>
 
-                <div className="products-row">
-                    <div className="product-cell">
-                        <span>0000001</span>
-                    </div>
-                    <div className="product-cell status-cell">
-                        <Badge variant="dot" color="green" size="md">
-                            Active
-                        </Badge>
-                    </div>
-                    <div className="product-cell">
-                        <span>Pesho Peshkov</span>
-                    </div>
-                    <div className="product-cell price">
-                        <NumberFormatter
-                            value={100000}
-                            suffix=" лв."
-                            thousandSeparator
-                        />
-                    </div>
-
-                    <div className="product-cell">
-                        <Button
-                            variant="gradient"
-                            size="compact-sm"
-                            gradient={{ from: "blue", to: "cyan", deg: 90 }}
-                        >
-                            Open Invoice
-                        </Button>
-                    </div>
-                </div>
+                <InvoiceItemsTable invoice={invoiceData}/>
             </div>
         </>
     );

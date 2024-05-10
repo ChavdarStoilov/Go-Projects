@@ -6,6 +6,7 @@ export default function TableNewInvoieItem({ data, remove }) {
         2: ["Completed", "green"],
         3: ["Rejected", "red"],
     };
+    
     const rows = data.map((element, key) => (
         <Table.Tr key={key}>
             <Table.Td>{element.items}</Table.Td>
