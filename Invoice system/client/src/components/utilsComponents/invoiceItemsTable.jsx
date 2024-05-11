@@ -7,9 +7,10 @@ export default function InvoiceItemsTable({ invoice }) {
         "rejected": "red",
     };
 
+
     return (
         <>
-            {invoice.length > 0 &&
+            {invoice &&
                 invoice.map((item, key) => (
                     <div className="products-row" key={key}>
                         <div className="product-cell">

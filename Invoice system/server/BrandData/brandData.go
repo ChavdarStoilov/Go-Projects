@@ -22,7 +22,7 @@ var db *sql.DB
 
 func connectDB() *sql.DB {
 	// Change username / password  / DB name
-	connectionString := "username:password@tcp(localhost:3306)/DB name"
+	connectionString := "test:qweqwe__@tcp(localhost:3306)/TestDB"
 	db, err := sql.Open("mysql", connectionString)
 	if err != nil {
 		log.Fatal(err)

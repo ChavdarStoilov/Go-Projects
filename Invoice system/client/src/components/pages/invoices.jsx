@@ -6,11 +6,14 @@ import * as api from "../../api/data";
 
 
 export default function Invoices() {
-    const [invoiceData, setInvoiceData] = useState({});
+    const [invoiceData, setInvoiceData] = useState(false);
     const [openNewInvoice, setOpenNewInvoice] = useState(false);
+    const [refresh, setRefresh] = useState(false);
 
     const openNewInvoiceHander = () => setOpenNewInvoice(true);
     const closeNewInvoiceHander = () => setOpenNewInvoice(false);
+
+    const refreshHander = () => setRefresh(true);
 
     useEffect(() => {
         api.GetAllInvoices()
@@ -22,11 +25,11 @@ export default function Invoices() {
             .catch((error) => {
                 console.log(error);
             });
-    }, []);
+    }, [refresh]);
 
     return (
         <>
-            {openNewInvoice && <NewInvoiceModal open={openNewInvoice} close={closeNewInvoiceHander}/>}
+            {openNewInvoice && <NewInvoiceModal open={openNewInvoice} close={closeNewInvoiceHander} refreshing={refreshHander}/>}
             <div className="app-content-header">
                 <h1>Invoices</h1>
                 <Button variant="filled" onClick={openNewInvoiceHander}>Add New Invoice</Button>
@@ -40,7 +43,7 @@ export default function Invoices() {
                     <div className="product-cell price"></div>
                 </div>
 
-                <InvoiceItemsTable invoice={invoiceData}/>
+                <InvoiceItemsTable invoice={invoiceData} />
             </div>
         </>
     );

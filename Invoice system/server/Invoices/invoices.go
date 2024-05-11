@@ -35,7 +35,7 @@ var db *sql.DB
 
 func connectDB() *sql.DB {
 	// Change username / password  / DB name
-	connectionString := "username:password@tcp(localhost:3306)/DB name"
+	connectionString := "test:qweqwe__@tcp(localhost:3306)/TestDB"
 	db, err := sql.Open("mysql", connectionString)
 	if err != nil {
 		log.Fatal(err)
@@ -86,8 +86,13 @@ func DisplayAllInvoices(w http.ResponseWriter, r *http.Request) {
 			}
 			tempData = append(tempData, item)
 		}
-		w.WriteHeader(http.StatusOK)
-		json.NewEncoder(w).Encode(tempData)
+
+		if len(tempData) > 0 {
+			json.NewEncoder(w).Encode(tempData)
+			w.WriteHeader(http.StatusOK)
+
+		}
+		w.WriteHeader(http.StatusNoContent)
 
 		db.Close()
 
