@@ -16,18 +16,18 @@ function App() {
 
     const Data = () => setRefresh(true);
 
-    useEffect(() => {
-        api.GetBrandData()
-            .then((result) => {
-                if (result.status === 200 && result.data !== null) {
-                    setBrandData(result.data);
-                }
-            })
-            .catch((error) => {
-                console.log(error);
-            })
-            .finally(() => setRefresh(false));
-    }, [refresh]);
+    // useEffect(() => {
+    //     api.GetBrandData()
+    //         .then((result) => {
+    //             if (result.status === 200 && result.data !== null) {
+    //                 setBrandData(result.data);
+    //             }
+    //         })
+    //         .catch((error) => {
+    //             console.log(error);
+    //         })
+    //         .finally(() => setRefresh(false));
+    // }, [refresh]);
 
     return (
         <MantineProvider>

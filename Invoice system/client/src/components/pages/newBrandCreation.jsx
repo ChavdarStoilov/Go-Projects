@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { useForm, isNotEmpty, isEmail, hasLength } from "@mantine/form";
 import { Stepper, Button, Group, TextInput } from "@mantine/core";
+import { Loader } from "@mantine/core";
 import * as api from "../../api/data";
 
-export default function NewBeandCreations({addData}) {
+export default function NewBeandCreations({ addData }) {
     const [active, setActive] = useState(0);
     const [formData, setFormData] = useState({});
     const [nextStepBtton, setNextStepButton] = useState(false);
@@ -18,10 +19,6 @@ export default function NewBeandCreations({addData}) {
             },
 
             validate: {
-                name: hasLength(
-                    { min: 2, max: 10 },
-                    "Name must be 2-10 characters long"
-                ),
                 name: isNotEmpty("Name must not be empty!"),
             },
         }),
@@ -34,15 +31,7 @@ export default function NewBeandCreations({addData}) {
             },
 
             validate: {
-                firstName: hasLength(
-                    { min: 2, max: 10 },
-                    "First Name must be 2-10 characters long"
-                ),
                 firstName: isNotEmpty("First Name must not be empty!"),
-                lastName: hasLength(
-                    { min: 2, max: 10 },
-                    "Last Name must be 2-10 characters long"
-                ),
                 lastName: isNotEmpty("Last Name must not be empty!"),
             },
         }),
@@ -54,16 +43,7 @@ export default function NewBeandCreations({addData}) {
             },
 
             validate: {
-                address: hasLength(
-                    { min: 2, max: 30 },
-                    "Address must be 2-30 characters long"
-                ),
                 address: isNotEmpty("Address must not be empty!"),
-                mail: hasLength(
-                    { min: 2, max: 10 },
-                    "Mail must be 2-10 characters long"
-                ),
-                mail: isNotEmpty("Mail must not be empty!"),
                 mail: isEmail("Invalid email"),
             },
         }),
@@ -79,14 +59,17 @@ export default function NewBeandCreations({addData}) {
     };
 
     const FormDetails = (e) => {
+
+        console.log(e.target);
         const formValidator =
             e.target.parentElement.parentElement.parentElement
                 .previousElementSibling.lastChild.children.length;
 
+
         if (formValidator) {
             const form =
                 e.target.parentElement.parentElement.parentElement
-                    .previousElementSibling.lastChild.children[0];
+                    .previousElementSibling.lastChild.children[1];
 
             if (form.tagName === "FORM") {
                 var data;
@@ -111,7 +94,11 @@ export default function NewBeandCreations({addData}) {
                 setErrors(validator[form.id].validate(data).errors);
             }
 
-            if (active === 2 && errors) {
+            if (
+                active === 2 &&
+                Object.keys(validator[form.id].validate(data).errors).length == 0
+            ) {
+                console.log(e.target);
                 setNextStepButton(e.target);
                 setLoading(true);
                 e.target.offsetParent.disabled = true;
@@ -129,7 +116,7 @@ export default function NewBeandCreations({addData}) {
                 api.CreateBrandData(formData)
                     .then((result) => {
                         if (result.status === 200) {
-                            addData()
+                            addData();
                         }
                     })
                     .catch((e) => console.log(e))
@@ -153,6 +140,7 @@ export default function NewBeandCreations({addData}) {
                     style={{ color: "white" }}
                     allowStepSelect={false}
                 >
+                    <legend>Brand information</legend>
                     <form style={{ margin: "20px 150px" }} id="brand">
                         <TextInput
                             label="Enter name of brand:"
@@ -171,6 +159,7 @@ export default function NewBeandCreations({addData}) {
                     description="Owner details!"
                     style={{ color: "white" }}
                 >
+                    <legend>Owner information</legend>
                     <form style={{ margin: "20px 150px" }} id="owner">
                         <TextInput
                             label="Enter first name of owner:"
@@ -205,6 +194,8 @@ export default function NewBeandCreations({addData}) {
                     loading={loading}
                     allowStepSelect={false}
                 >
+                    <legend>Address information</legend>
+
                     <form style={{ margin: "20px 150px" }} id="contancts">
                         <TextInput
                             label="Enter Address:"
@@ -230,7 +221,9 @@ export default function NewBeandCreations({addData}) {
                     </form>
                 </Stepper.Step>
                 <Stepper.Completed>
-                    {showData && (
+                    <legend>Summary information</legend>
+
+                    {showData ? (
                         <div
                             style={{
                                 color: "white",
@@ -244,6 +237,8 @@ export default function NewBeandCreations({addData}) {
                             <p>Brand Address: {formData.address}</p>
                             <p>Mail: {formData.mail}</p>
                         </div>
+                    ) : (
+                        <Loader size={30} />
                     )}
                 </Stepper.Completed>
             </Stepper>
