@@ -12,21 +12,23 @@ import (
 )
 
 type InvoiceItems struct {
-	Item     string  `json:"items"`
-	Quantity int     `json:"quantity"`
-	Price    float64 `json:"price"`
-	Amount   float64 `json:"amount"`
-	Status   int     `json:"status"`
+	Item       string  `json:"items"`
+	Quantity   int     `json:"quantity"`
+	Price      float64 `json:"price"`
+	Amount     float64 `json:"amount"`
+	Status     int     `json:"status"`
+	Invoice_id int64   `json:"invoice_id"`
 }
 
 type InvoiceFromDB struct {
-	ID        int     `json:"id"`
-	Item      string  `json:"items"`
-	Quantity  int     `json:"quantity"`
-	Status    string  `json:"status"`
-	FirstName string  `json:"first_name"`
-	LastName  string  `json:"last_name"`
-	Amount    float64 `json:"amount"`
+	ID         int     `json:"id"`
+	Item       string  `json:"items"`
+	Quantity   int     `json:"quantity"`
+	Status     string  `json:"status"`
+	FirstName  string  `json:"first_name"`
+	LastName   string  `json:"last_name"`
+	Amount     float64 `json:"amount"`
+	Invoice_id int64   `json:"invoice_id"`
 }
 
 var db *sql.DB
@@ -39,6 +41,16 @@ func connectDB() *sql.DB {
 		log.Fatal(err)
 	}
 	return db
+}
+
+func GetLastInvoiceIdx() (int64, error) {
+	var idx int64
+	err := db.QueryRow("select ifnull(max(invoice_id), 0) from Invoices;").Scan(&idx)
+	if err != nil {
+		return -1, fmt.Errorf(err.Error())
+	}
+
+	return idx, nil
 }
 
 func DisplayAllInvoices(w http.ResponseWriter, r *http.Request) {
@@ -54,7 +66,7 @@ func DisplayAllInvoices(w http.ResponseWriter, r *http.Request) {
 		db = connectDB()
 
 		rows, err := db.Query(`
-			select t.ID, t.Items, t.Quantity, t.Amount, s.status, c.first_name, c.last_name 
+			select t.invoice_id, t.ID, t.Items, t.Quantity, t.Amount, s.status, c.first_name, c.last_name 
 		 	from Invoices t 
 		 	Inner join status_type s on t.status = s.id 
 		 	Inner join Clients c on t.owner = c.id;
@@ -69,7 +81,7 @@ func DisplayAllInvoices(w http.ResponseWriter, r *http.Request) {
 		var tempData []InvoiceFromDB
 		for rows.Next() {
 			var item InvoiceFromDB
-			if err := rows.Scan(&item.ID, &item.Item, &item.Quantity, &item.Amount, &item.Status, &item.FirstName, &item.LastName); err != nil {
+			if err := rows.Scan(&item.Invoice_id, &item.ID, &item.Item, &item.Quantity, &item.Amount, &item.Status, &item.FirstName, &item.LastName); err != nil {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 			}
 			tempData = append(tempData, item)
@@ -109,7 +121,16 @@ func CraeteNewInvoice(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		var sql = "Insert into Invoices (Items, Quantity, Price , status, Amount, owner) values "
+		db = connectDB()
+
+		idx, errIdx := GetLastInvoiceIdx()
+
+		if errIdx != nil {
+			http.Error(w, errIdx.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		var sql = "Insert into Invoices (invoice_id, Items, Quantity, Price , status, Amount, owner) values "
 
 		for item := range data {
 			var sing string
@@ -118,12 +139,8 @@ func CraeteNewInvoice(w http.ResponseWriter, r *http.Request) {
 			} else {
 				sing += ","
 			}
-			sql += fmt.Sprintf("('%v', %d, %f, %d, %f, %d)%v", data[item].Item, data[item].Quantity, data[item].Price, data[item].Status, data[item].Amount, 1, sing)
+			sql += fmt.Sprintf("(%d, '%v', %d, %f, %d, %f, %d)%v", idx+1, data[item].Item, data[item].Quantity, data[item].Price, data[item].Status, data[item].Amount, 1, sing)
 		}
-
-		fmt.Println(sql)
-
-		db = connectDB()
 
 		rows, errSql := db.Query(sql)
 
