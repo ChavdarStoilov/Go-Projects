@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useForm, isNotEmpty, isEmail, hasLength } from "@mantine/form";
+import { useForm, isNotEmpty, isEmail } from "@mantine/form";
 import { Stepper, Button, Group, TextInput } from "@mantine/core";
 import { Loader } from "@mantine/core";
 import * as api from "../../api/data";
@@ -60,7 +60,6 @@ export default function NewBeandCreations({ addData }) {
 
     const FormDetails = (e) => {
 
-        console.log(e.target);
         const formValidator =
             e.target.parentElement.parentElement.parentElement
                 .previousElementSibling.lastChild.children.length;
@@ -98,7 +97,6 @@ export default function NewBeandCreations({ addData }) {
                 active === 2 &&
                 Object.keys(validator[form.id].validate(data).errors).length == 0
             ) {
-                console.log(e.target);
                 setNextStepButton(e.target);
                 setLoading(true);
                 e.target.offsetParent.disabled = true;
@@ -141,7 +139,7 @@ export default function NewBeandCreations({ addData }) {
                     allowStepSelect={false}
                 >
                     <legend>Brand information</legend>
-                    <form style={{ margin: "20px 150px" }} id="brand">
+                    <form style={{ margin: "20px 150px" }} id="brand" onSubmit={(e) => e.preventDefault()}>
                         <TextInput
                             label="Enter name of brand:"
                             style={{ color: "white" }}
@@ -160,7 +158,7 @@ export default function NewBeandCreations({ addData }) {
                     style={{ color: "white" }}
                 >
                     <legend>Owner information</legend>
-                    <form style={{ margin: "20px 150px" }} id="owner">
+                    <form style={{ margin: "20px 150px" }} id="owner" onSubmit={(e) => e.preventDefault()}>
                         <TextInput
                             label="Enter first name of owner:"
                             style={{ color: "white" }}
@@ -196,7 +194,7 @@ export default function NewBeandCreations({ addData }) {
                 >
                     <legend>Address information</legend>
 
-                    <form style={{ margin: "20px 150px" }} id="contancts">
+                    <form style={{ margin: "20px 150px" }} id="contancts" onSubmit={(e) => e.preventDefault()}>
                         <TextInput
                             label="Enter Address:"
                             style={{ color: "white" }}
@@ -238,7 +236,7 @@ export default function NewBeandCreations({ addData }) {
                             <p>Mail: {formData.mail}</p>
                         </div>
                     ) : (
-                        <Loader size={30} />
+                        <Loader size={30} className="dataLoading"/>
                     )}
                 </Stepper.Completed>
             </Stepper>
