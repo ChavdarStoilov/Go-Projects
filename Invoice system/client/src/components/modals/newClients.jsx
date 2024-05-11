@@ -1,7 +1,7 @@
 import { Modal, Button, Box, TextInput } from "@mantine/core";
 import * as api from "../../api/data"
 
-export default function NewClientsModal({open, close}) {
+export default function NewClientsModal({open, close, refreshing}) {
 
     const CreateNewClient = (event) => {
 
@@ -13,11 +13,16 @@ export default function NewClientsModal({open, close}) {
 
         api.CreateNewClient(data)
         .then((result) => {
-            console.log(result);
+            if (result.status === 200) {
+                refreshing()
+            }
         })
         .catch((error) => {
             console.log(error);
-        });
+        })
+        .finally(() => {
+            close();
+        })
 
         form.reset();
     }

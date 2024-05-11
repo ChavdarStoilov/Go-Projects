@@ -8,9 +8,12 @@ import NewClientsModal from "../modals/newClients";
 export default function Clients() {
     const [clientsData, setClientsData] = useState({});
     const [openNewClients, setOpenNewClients] = useState(false);
+    const [refresh, setRefresh] = useState(false);
 
     const openNewClientsHander = () => setOpenNewClients(true);
     const closeNewClientsHander = () => setOpenNewClients(false);
+
+    const refreshHander = () => setRefresh(true);
 
     useEffect(() => {
         api.GetAllClients()
@@ -22,11 +25,11 @@ export default function Clients() {
             .catch((error) => {
                 console.log(error);
             });
-    }, []);
+    }, [refresh]);
 
     return (
         <>
-            {openNewClients && <NewClientsModal open={openNewClients} close={closeNewClientsHander}/>}
+            {openNewClients && <NewClientsModal open={openNewClients} close={closeNewClientsHander} refreshing={refreshHander}/>}
             <div className="app-content-header">
                 <h1>Clients</h1>
                 <Button variant="filled" onClick={openNewClientsHander}>Add New Clients</Button>
