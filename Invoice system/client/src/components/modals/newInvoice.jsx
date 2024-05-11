@@ -1,7 +1,7 @@
 import { Modal, Button, Box } from "@mantine/core";
 import * as api from "../../api/data";
 import { useState, useEffect } from "react";
-import { TextInput, NumberInput, NativeSelect } from "@mantine/core";
+import { TextInput, NumberInput, NativeSelect, Fieldset } from "@mantine/core";
 import TableNewInvoieItem from "../utilsComponents/tableNewInvoiceItem";
 
 export default function NewInvoiceModal({ open, close, refreshing }) {
@@ -24,7 +24,7 @@ export default function NewInvoiceModal({ open, close, refreshing }) {
         data["quantity"] = parseInt(data["quantity"]);
         data["status"] = parseInt(data["status"]);
         data["amount"] = data["price"] * data["quantity"];
-        data["owner"] = parseInt(data["owner"])
+        data["owner"] = parseInt(data["owner"]);
 
         setInvoice((invoice) => [...invoice, data]);
 
@@ -35,7 +35,7 @@ export default function NewInvoiceModal({ open, close, refreshing }) {
         api.CreateNewInvoice(invoice)
             .then((result) => {
                 if (result.status === 200) {
-                    refreshing()
+                    refreshing();
                 }
             })
             .catch((err) => {
@@ -43,8 +43,7 @@ export default function NewInvoiceModal({ open, close, refreshing }) {
             })
             .finally(() => {
                 close();
-            })
-            
+            });
     };
 
     useEffect(() => {
@@ -67,65 +66,68 @@ export default function NewInvoiceModal({ open, close, refreshing }) {
 
     return (
         <>
-            <Modal opened={open} onClose={close} title="New Invoice">
-                <TableNewInvoieItem data={invoice} remove={removeInvoice} />
-
+            <Modal opened={open} onClose={close}>
+                <Fieldset legend="Invoice information">
+                    <TableNewInvoieItem data={invoice} remove={removeInvoice} />
+                </Fieldset>
                 <form onSubmit={AddNewInvoice}>
-                    <TextInput
-                        radius="md"
-                        label="Item"
-                        placeholder="Enter a name of item"
-                        required
-                        name="items"
-                    />
-                    <NumberInput
-                        label="Quantity"
-                        placeholder="Enter a quantity"
-                        required
-                        name="quantity"
-                    />
-                    <NumberInput
-                        label="Price"
-                        placeholder="Enter a price"
-                        required
-                        name="price"
-                        suffix=" лв."
-                    />
+                    <Fieldset legend="New invoice item information">
+                        <TextInput
+                            radius="md"
+                            label="Item"
+                            placeholder="Enter a name of item"
+                            required
+                            name="items"
+                        />
+                        <NumberInput
+                            label="Quantity"
+                            placeholder="Enter a quantity"
+                            required
+                            name="quantity"
+                        />
+                        <NumberInput
+                            label="Price"
+                            placeholder="Enter a price"
+                            required
+                            name="price"
+                            suffix=" лв."
+                        />
 
-                    <NativeSelect
-                        label="Clients"
-                        required
-                        data={clients}
-                        name="owner"
-                    />
+                        <NativeSelect
+                            label="Clients"
+                            required
+                            data={clients.length >0 && clients}
+                            name="owner"
+                        />
 
-                    <NativeSelect
-                        label="Status"
-                        required
-                        data={[
-                            { label: "Active", value: "1" },
-                            { label: "Closed", value: "2" },
-                            { label: "Rejected", value: "3" },
-                        ]}
-                        name="status"
-                    />
-                    <Box
-                        style={{
-                            marginTop: "20px",
-                            display: "flex",
-                            justifyContent: "space-evenly",
-                        }}
-                    >
-                        <Button type="submit">Add</Button>
-                        <Button
-                            loading={loading}
-                            loaderProps={{ type: "dots" }}
-                            onClick={CreateNewInvoice}
-                            disabled={invoice.length <= 0}
+                        <NativeSelect
+                            label="Status"
+                            required
+                            data={[
+                                { label: "Active", value: "1" },
+                                { label: "Closed", value: "2" },
+                                { label: "Rejected", value: "3" },
+                            ]}
+                            name="status"
+                        />
+                        <Box
+                            style={{
+                                marginTop: "20px",
+                                display: "flex",
+                                justifyContent: "space-evenly",
+                            }}
                         >
-                            Create
-                        </Button>
-                    </Box>
+                            <Button type="submit">Add</Button>
+                            <Button
+                                loading={loading}
+                                loaderProps={{ type: "dots" }}
+                                onClick={CreateNewInvoice}
+                                disabled={invoice.length <= 0}
+                            >
+                                Create
+                            </Button>
+                        </Box>
+                    </Fieldset>
                 </form>
             </Modal>
         </>

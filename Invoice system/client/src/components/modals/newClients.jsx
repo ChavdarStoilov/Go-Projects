@@ -1,4 +1,4 @@
-import { Modal, Button, Box, TextInput } from "@mantine/core";
+import { Modal, Button, Box, TextInput, Fieldset } from "@mantine/core";
 import * as api from "../../api/data"
 
 export default function NewClientsModal({open, close, refreshing}) {
@@ -10,6 +10,7 @@ export default function NewClientsModal({open, close, refreshing}) {
         const form = event.target
 
         const data = Object.fromEntries(new FormData(form));
+
 
         api.CreateNewClient(data)
         .then((result) => {
@@ -28,8 +29,9 @@ export default function NewClientsModal({open, close, refreshing}) {
     }
 
     return (
-        <Modal opened={open} onClose={close} title="New Client">
+        <Modal opened={open} onClose={close}>
             <form onSubmit={CreateNewClient}>
+            <Fieldset legend="New client information">
                 <TextInput
                     radius="md"
                     label="First Name"
@@ -66,6 +68,7 @@ export default function NewClientsModal({open, close, refreshing}) {
                         Create
                     </Button>
                 </Box>
+                </Fieldset>
             </form>
         </Modal>
     );
