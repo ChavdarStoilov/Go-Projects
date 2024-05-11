@@ -29,12 +29,17 @@ func connectDB() *sql.DB {
 }
 
 func DisplayAllClients(w http.ResponseWriter, r *http.Request) {
-	if r.Method == "GET" {
+	if r.Method == "GET" || r.Method == "OPTIONS" {
+
+		w.Header().Add("Access-Control-Allow-Origin", "*")
+		w.Header().Add("Access-Control-Allow-Headers", "*")
+
+		if r.Method == "OPTIONS" {
+			w.WriteHeader(http.StatusOK)
+			return
+		}
+
 		db = connectDB()
-
-		w.Header().Set("Access-Control-Allow-Origin", "*")
-		w.Header().Set("Access-Control-Allow-Headers", "*")
-
 		rows, err := db.Query("SELECT * FROM Clients;")
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -58,8 +63,38 @@ func DisplayAllClients(w http.ResponseWriter, r *http.Request) {
 
 }
 
+func CreateNewClient(w http.ResponseWriter, r *http.Request) {
+
+	if r.Method == "POST" || r.Method == "OPTIONS" {
+		w.Header().Add("Access-Control-Allow-Origin", "*")
+		w.Header().Add("Access-Control-Allow-Headers", "*")
+		w.Header().Set("Content-Type", "application/json")
+
+		if r.Method == "OPTIONS" {
+
+			w.WriteHeader(http.StatusOK)
+			return
+		}
+
+		data := new(Clients)
+
+		err := json.NewDecoder(r.Body).Decode(data)
+
+		if err != nil {
+			panic(err)
+		}
+
+		json.NewEncoder(w).Encode(data)
+		w.WriteHeader(http.StatusCreated)
+
+	}
+
+}
+
 func main() {
 
 	http.HandleFunc("/", DisplayAllClients)
+	http.HandleFunc("/create/", CreateNewClient)
+
 	log.Fatal(http.ListenAndServe(":8881", nil))
 }
