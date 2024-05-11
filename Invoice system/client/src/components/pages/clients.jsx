@@ -35,7 +35,7 @@ export default function Clients() {
                 <div className="products-header">
                     <div className="product-cell">ID</div>
                     <div className="product-cell">First name</div>
-                    <div className="product-cell">lastName</div>
+                    <div className="product-cell">Last Name</div>
                     <div className="product-cell">Phone</div>
                     <div className="product-cell"></div>
                 </div>

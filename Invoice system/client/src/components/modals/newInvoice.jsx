@@ -1,18 +1,17 @@
 import { Modal, Button, Box } from "@mantine/core";
 import * as api from "../../api/data";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { TextInput, NumberInput, NativeSelect } from "@mantine/core";
 import TableNewInvoieItem from "../utilsComponents/tableNewInvoiceItem";
 
 export default function NewInvoiceModal({ open, close }) {
     const [loading, setLoading] = useState(false);
     const [invoice, setInvoice] = useState([]);
+    const [clients, setClients] = useState([]);
 
     const removeInvoice = (row) => {
-
-        setInvoice((invoice) => invoice.filter( item => item !== row));
-
-    }
+        setInvoice((invoice) => invoice.filter((item) => item !== row));
+    };
 
     const AddNewInvoice = (event) => {
         event.preventDefault();
@@ -22,26 +21,43 @@ export default function NewInvoiceModal({ open, close }) {
         const data = Object.fromEntries(new FormData(form));
 
         data["price"] = parseFloat(data["price"]);
-        data["quantity"] = parseInt(data["quantity"])
-        data['status']= parseInt(data["status"])
-        data["amount"] = data["price"]* data["quantity"];
+        data["quantity"] = parseInt(data["quantity"]);
+        data["status"] = parseInt(data["status"]);
+        data["amount"] = data["price"] * data["quantity"];
+        data["owner"] = parseInt(data["owner"])
 
         setInvoice((invoice) => [...invoice, data]);
 
         form.reset();
     };
 
-    
     const CreateNewInvoice = () => {
-
         api.CreateNewInvoice(invoice)
-        .then((result) => {
-            console.log(result);
-        })
-        .catch((err) => {
-            console.log(result);
-        })
-    }
+            .then((result) => {
+                console.log(result);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    };
+
+    useEffect(() => {
+        api.GetAllClients()
+            .then((result) => {
+                if (result.status === 200) {
+                    setClients(
+                        ...clients,
+                        result.data.map((client) => ({
+                            label: `${client.first_name} ${client.last_name}`,
+                            value: client.id,
+                        }))
+                    );
+                }
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    }, []);
 
     return (
         <>
@@ -69,6 +85,14 @@ export default function NewInvoiceModal({ open, close }) {
                         name="price"
                         suffix=" лв."
                     />
+
+                    <NativeSelect
+                        label="Clients"
+                        required
+                        data={clients}
+                        name="owner"
+                    />
+
                     <NativeSelect
                         label="Status"
                         required
@@ -79,7 +103,13 @@ export default function NewInvoiceModal({ open, close }) {
                         ]}
                         name="status"
                     />
-                    <Box style={{marginTop: "20px", display:"flex", justifyContent: "space-evenly"}}>
+                    <Box
+                        style={{
+                            marginTop: "20px",
+                            display: "flex",
+                            justifyContent: "space-evenly",
+                        }}
+                    >
                         <Button type="submit">Add</Button>
                         <Button
                             loading={loading}
