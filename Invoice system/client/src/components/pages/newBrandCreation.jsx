@@ -59,68 +59,69 @@ export default function NewBeandCreations({ addData }) {
     };
 
     const FormDetails = (e) => {
-
-        const formValidator =
-            e.target.parentElement.parentElement.parentElement
-                .previousElementSibling.lastChild.children.length;
-
-
-        if (formValidator) {
-            const form =
+        if (e.target.parentElement.parentElement.parentElement.id !== "root") {
+            const formValidator =
                 e.target.parentElement.parentElement.parentElement
-                    .previousElementSibling.lastChild.children[1];
+                    .previousElementSibling.lastChild.children.length;
 
-            if (form.tagName === "FORM") {
-                var data;
-                data = Object.fromEntries(new FormData(form));
+            if (formValidator) {
+                const form =
+                    e.target.parentElement.parentElement.parentElement
+                        .previousElementSibling.lastChild.children[1];
 
-                if (form.id == "owner") {
-                    data = {
-                        Owner: `${data["firstName"]} ${data["lastName"]}`,
-                    };
+                if (form.tagName === "FORM") {
+                    var data;
+                    data = Object.fromEntries(new FormData(form));
+
+                    if (form.id == "owner") {
+                        data = {
+                            Owner: `${data["firstName"]} ${data["lastName"]}`,
+                        };
+                    }
+
+                    if (!validator[form.id].validate(data).hasErrors) {
+                        setFormData({
+                            ...formData, // Copy the old fields
+                            ...data, // But override this one
+                        });
+                        form.reset();
+                        setActive((current) =>
+                            current < 3 ? current + 1 : current
+                        );
+                    }
+                    setErrors(validator[form.id].validate(data).errors);
                 }
 
-                if (!validator[form.id].validate(data).hasErrors) {
-                    setFormData({
-                        ...formData, // Copy the old fields
-                        ...data, // But override this one
-                    });
-                    form.reset();
-                    setActive((current) =>
-                        current < 3 ? current + 1 : current
-                    );
+                if (
+                    active === 2 &&
+                    Object.keys(validator[form.id].validate(data).errors)
+                        .length == 0
+                ) {
+                    setNextStepButton(e.target);
+                    setLoading(true);
+                    e.target.offsetParent.disabled = true;
+
+                    setTimeout(() => {
+                        setLoading(false);
+                        e.target.textContent = "Save Data";
+                        e.target.offsetParent.disabled = false;
+                        e.target.offsetParent.style.backgroundColor = "green";
+
+                        setShowData(true);
+                    }, 2000);
+                } else if (active === 3) {
+                    setLoadingPOST(true);
+                    api.CreateBrandData(formData)
+                        .then((result) => {
+                            if (result.status === 200) {
+                                addData();
+                            }
+                        })
+                        .catch((e) => console.log(e))
+                        .finally(() => {
+                            setLoadingPOST(false);
+                        });
                 }
-                setErrors(validator[form.id].validate(data).errors);
-            }
-
-            if (
-                active === 2 &&
-                Object.keys(validator[form.id].validate(data).errors).length == 0
-            ) {
-                setNextStepButton(e.target);
-                setLoading(true);
-                e.target.offsetParent.disabled = true;
-
-                setTimeout(() => {
-                    setLoading(false);
-                    e.target.textContent = "Save Data";
-                    e.target.offsetParent.disabled = false;
-                    e.target.offsetParent.style.backgroundColor = "green";
-
-                    setShowData(true);
-                }, 2000);
-            } else if (active === 3) {
-                setLoadingPOST(true);
-                api.CreateBrandData(formData)
-                    .then((result) => {
-                        if (result.status === 200) {
-                            addData();
-                        }
-                    })
-                    .catch((e) => console.log(e))
-                    .finally(() => {
-                        setLoadingPOST(false);
-                    });
             }
         }
     };
@@ -139,7 +140,11 @@ export default function NewBeandCreations({ addData }) {
                     allowStepSelect={false}
                 >
                     <legend>Brand information</legend>
-                    <form style={{ margin: "20px 150px" }} id="brand" onSubmit={(e) => e.preventDefault()}>
+                    <form
+                        style={{ margin: "20px 150px" }}
+                        id="brand"
+                        onSubmit={(e) => e.preventDefault()}
+                    >
                         <TextInput
                             label="Enter name of brand:"
                             style={{ color: "white" }}
@@ -158,7 +163,11 @@ export default function NewBeandCreations({ addData }) {
                     style={{ color: "white" }}
                 >
                     <legend>Owner information</legend>
-                    <form style={{ margin: "20px 150px" }} id="owner" onSubmit={(e) => e.preventDefault()}>
+                    <form
+                        style={{ margin: "20px 150px" }}
+                        id="owner"
+                        onSubmit={(e) => e.preventDefault()}
+                    >
                         <TextInput
                             label="Enter first name of owner:"
                             style={{ color: "white" }}
@@ -194,7 +203,11 @@ export default function NewBeandCreations({ addData }) {
                 >
                     <legend>Address information</legend>
 
-                    <form style={{ margin: "20px 150px" }} id="contancts" onSubmit={(e) => e.preventDefault()}>
+                    <form
+                        style={{ margin: "20px 150px" }}
+                        id="contancts"
+                        onSubmit={(e) => e.preventDefault()}
+                    >
                         <TextInput
                             label="Enter Address:"
                             style={{ color: "white" }}
@@ -236,7 +249,7 @@ export default function NewBeandCreations({ addData }) {
                             <p>Mail: {formData.mail}</p>
                         </div>
                     ) : (
-                        <Loader size={30} className="dataLoading"/>
+                        <Loader size={30} className="dataLoading" />
                     )}
                 </Stepper.Completed>
             </Stepper>

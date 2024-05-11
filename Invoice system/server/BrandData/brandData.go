@@ -86,11 +86,7 @@ func CreateBrand(w http.ResponseWriter, r *http.Request) {
 			panic(err)
 		}
 
-		data.ID = 2
-
-		fmt.Println(data.ID, data.Name, data.Owner, data.Address, data.Mail)
-
-		sql := fmt.Sprintf("Insert into BrandConfig (ID, Name, Owner, Address, Mail) values ('%d', '%v', '%v', '%v', '%v');", data.ID, data.Name, data.Owner, data.Address, data.Mail)
+		sql := fmt.Sprintf("Insert into BrandConfig (Name, Owner, Address, Mail) values ('%v', '%v', '%v', '%v');", data.Name, data.Owner, data.Address, data.Mail)
 
 		rows, err := db.Query(sql)
 
