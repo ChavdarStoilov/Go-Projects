@@ -391,3 +391,31 @@ body {
   top: 43%;
   position: absolute;
 }
+
+.statisctics {
+  width: 80%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  margin: 20px auto;
+  
+}
+.m_1b7284a3 {
+  width: 150px;
+  height: 150px;
+  box-shadow: 6px 0px 22px -3px rgb(10, 82, 146) !important;
+
+}
+
+
+.statisctics .title {
+  text-align: center;
+  font-size: 21px;
+  margin-bottom: 20px;
+}
+
+.statisctics .number {
+  font-size: 18px;
+  text-align: center;
+  
+}

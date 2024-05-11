@@ -31,15 +31,15 @@ function App() {
 
     return (
         <MantineProvider>
-            <Menu brand={brandData ? brandData[0].name : false} />
+            <Menu brand={brandData.brandData ? brandData.brandData[0].name : false} />
             <div className="app-content">
                 <Routes location={location} key={location.pathname}>
                     <Route
                         exact
                         path="/"
                         element={
-                            brandData ? (
-                                <HomePage brandData={brandData} />
+                            brandData.brandData ? (
+                                <HomePage brandData={brandData.brandData} counters={brandData.counters} />
                             ) : (
                                 <NewBeandCreations addData={Data} />
                             )

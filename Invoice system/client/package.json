@@ -30,6 +30,7 @@
     "dayjs": "^1.11.11",
     "embla-carousel-react": "^8.0.2",
     "react": "^18.2.0",
+    "react-countup": "^6.5.3",
     "react-dom": "^18.2.0",
     "recharts": "^2.12.6"
   },

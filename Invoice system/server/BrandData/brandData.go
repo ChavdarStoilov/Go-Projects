@@ -18,6 +18,14 @@ type BradDataConfig struct {
 	Mail    string `json:"mail"`
 }
 
+type Data struct {
+	Counters struct {
+		InvoiceCounter int64 `json:"invoice_counter"`
+		ClientCounter  int64 `json:"client_counter"`
+	} `json:"counters"`
+	BrandData []BradDataConfig `json:"brandData"`
+}
+
 var db *sql.DB
 
 func connectDB() *sql.DB {
@@ -52,16 +60,24 @@ func DisplayBrandData(w http.ResponseWriter, r *http.Request) {
 
 		defer rows.Close()
 
-		var tempData []BradDataConfig
+		var TempData Data
+
+		errCounter := db.QueryRow("select (select count(*) from Invoices) as invoicCounter, (select count(*) from Clients) as client_cnouter;").Scan(&TempData.Counters.InvoiceCounter, &TempData.Counters.ClientCounter)
+
+		if errCounter != nil {
+			http.Error(w, errCounter.Error(), http.StatusInternalServerError)
+			return
+		}
 		for rows.Next() {
 			var brand BradDataConfig
 			if err := rows.Scan(&brand.ID, &brand.Name, &brand.Owner, &brand.Address, &brand.Mail); err != nil {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 			}
-			tempData = append(tempData, brand)
+			TempData.BrandData = append(TempData.BrandData, brand)
 		}
+
 		w.WriteHeader(http.StatusOK)
-		json.NewEncoder(w).Encode(tempData)
+		json.NewEncoder(w).Encode(TempData)
 		db.Close()
 		return
 	}
