@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 
@@ -83,6 +84,19 @@ func CreateNewClient(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			panic(err)
 		}
+
+		quary := fmt.Sprintf("Insert into Clients (First_name, Last_name, Phone) values ('%v', '%v' , '%v')", data.FirstName, data.LastName, data.Phone)
+
+		db = connectDB()
+
+		cursor, errInsert := db.Query(quary)
+
+		if errInsert != nil {
+			http.Error(w, errInsert.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		cursor.Close()
 
 		json.NewEncoder(w).Encode(data)
 		w.WriteHeader(http.StatusCreated)
