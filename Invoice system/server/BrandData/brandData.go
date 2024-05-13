@@ -62,7 +62,7 @@ func DisplayBrandData(w http.ResponseWriter, r *http.Request) {
 
 		var TempData Data
 
-		errCounter := db.QueryRow("select (select count(*) from Invoices) as invoicCounter, (select count(*) from Clients) as client_cnouter;").Scan(&TempData.Counters.InvoiceCounter, &TempData.Counters.ClientCounter)
+		errCounter := db.QueryRow("select (select count(distinct invoice_id) from Invoices) as invoicCounter, (select count(*) from Clients) as client_cnouter;").Scan(&TempData.Counters.InvoiceCounter, &TempData.Counters.ClientCounter)
 
 		if errCounter != nil {
 			http.Error(w, errCounter.Error(), http.StatusInternalServerError)

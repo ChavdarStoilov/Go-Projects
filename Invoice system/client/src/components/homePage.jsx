@@ -1,7 +1,12 @@
 import { Text, Paper, Box } from "@mantine/core";
 import CountUp from 'react-countup';
+import { useEffect } from "react";
 
-export default function HomePage({ counters }) {
+export default function HomePage({ counters, refreshData }) {
+
+    useEffect(() => {
+        refreshData()
+    }, [])
     return (
         <>
             <div className="app-content-header">

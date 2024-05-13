@@ -16,6 +16,7 @@ function App() {
     const [loading, setLoading] = useState(true);
 
     const Data = () => setRefresh(true);
+
     useEffect(() => {
         api.GetBrandData()
             .then((result) => {
@@ -54,7 +55,9 @@ function App() {
                                         <HomePage
                                             brandData={brandData.brandData}
                                             counters={brandData.counters}
+                                            refreshData={Data}    
                                         />
+                                        
                                     ) : (
                                         <NewBeandCreations addData={Data} />
                                     )
