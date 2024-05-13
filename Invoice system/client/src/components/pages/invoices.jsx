@@ -4,7 +4,7 @@ import NewInvoiceModal from "../modals/newInvoice";
 import InvoiceItemsTable from "../utilsComponents/invoiceItemsTable";
 import * as api from "../../api/data";
 
-export default function Invoices() {
+export default function Invoices({brand}) {
     const [invoiceData, setInvoiceData] = useState(false);
     const [openNewInvoice, setOpenNewInvoice] = useState(false);
     const [refresh, setRefresh] = useState(false);
@@ -58,7 +58,7 @@ export default function Invoices() {
                             <div className="product-cell price"></div>
                         </div>
 
-                        <InvoiceItemsTable invoice={invoiceData} />
+                        <InvoiceItemsTable invoice={invoiceData} brand={brand} />
                     </div>
                 </>
             ) : (

@@ -2,14 +2,13 @@ import {
     Badge,
     Button,
     NumberFormatter,
-    TextInput,
     Modal,
     Box,
 } from "@mantine/core";
 import { useState } from "react";
 import InvoiceTemplate from "./invoiceTemplate"
 
-export default function InvoiceItemsTable({ invoice }) {
+export default function InvoiceItemsTable({ invoice, brand }) {
     const Statuses = {
         active: "yellow",
         completed: "green",
@@ -25,9 +24,9 @@ export default function InvoiceItemsTable({ invoice }) {
                 <Modal
                     opened={opened[0]}
                     onClose={() => setOpen(false)}
-                    title="Invoice details"
+                    size="lg"
                 >
-                    <InvoiceTemplate invoiceData={invoice[opened[1]]}/>
+                    <InvoiceTemplate invoiceData={invoice[opened[1]]} brand={brand}/>
                     <Box
                         style={{
                             marginTop: "20px",
@@ -35,7 +34,6 @@ export default function InvoiceItemsTable({ invoice }) {
                             justifyContent: "space-evenly",
                         }}
                     >
-                        <Button>Save</Button>
                         <Button onClick={() => setOpen(false)}>Close</Button>
                     </Box>
                 </Modal>

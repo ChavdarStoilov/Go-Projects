@@ -424,3 +424,42 @@ body {
 .loader {
   margin: 25% 50%;
 }
+
+.invoice-head td {
+  padding: 0 8px;
+}
+
+.span8 h2 {
+  margin-top: 0px;
+}
+
+.span3 {
+  display: flex;
+  flex-direction: column;
+}
+.invoice-details  {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.invoice-body{
+  background-color:transparent;
+}
+
+.invoice-body table {
+  width: 100%;
+  text-align: left;
+}
+.invoice-thank{
+  margin-top: 60px;
+  padding: 5px;
+}
+.span4 p{
+  margin-top:15px;
+}
+
+.span8 h5 {
+  text-align:center;
+}

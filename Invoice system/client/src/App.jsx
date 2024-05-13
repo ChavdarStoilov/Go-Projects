@@ -63,7 +63,7 @@ function App() {
                             <Route
                                 exact
                                 path="invoices/"
-                                element={<Invoices />}
+                                element={<Invoices brand={brandData.brandData}/>}
                             />
                             <Route
                                 exact
