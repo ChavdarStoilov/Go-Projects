@@ -21,7 +21,6 @@ type InvoiceItems struct {
 }
 
 type InvoiceFromDB struct {
-	ID         int     `json:"id"`
 	Item       string  `json:"items"`
 	Quantity   int     `json:"quantity"`
 	Status     string  `json:"status"`
@@ -66,10 +65,11 @@ func DisplayAllInvoices(w http.ResponseWriter, r *http.Request) {
 		db = connectDB()
 
 		rows, err := db.Query(`
-			select t.invoice_id, t.ID, t.Items, t.Quantity, t.Amount, s.status, c.first_name, c.last_name 
-		 	from Invoices t 
-		 	Inner join status_type s on t.status = s.id 
-		 	Inner join Clients c on t.owner = c.id;
+			select i.invoice_id, i.Items, i.Quantity, sum(i.Amount), s.status, c.first_name, c.last_name 
+				from Invoices i 
+				Inner join status_type s on i.status = s.id 
+				Inner join Clients c on i.owner = c.id 
+				GROUP BY i.invoice_id;
 		`)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -81,7 +81,7 @@ func DisplayAllInvoices(w http.ResponseWriter, r *http.Request) {
 		var tempData []InvoiceFromDB
 		for rows.Next() {
 			var item InvoiceFromDB
-			if err := rows.Scan(&item.Invoice_id, &item.ID, &item.Item, &item.Quantity, &item.Amount, &item.Status, &item.FirstName, &item.LastName); err != nil {
+			if err := rows.Scan(&item.Invoice_id, &item.Item, &item.Quantity, &item.Amount, &item.Status, &item.FirstName, &item.LastName); err != nil {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 			}
 			tempData = append(tempData, item)
@@ -160,6 +160,48 @@ func CraeteNewInvoice(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 }
+
+// func GetinvoiceData(w http.ResponseWriter, r *http.Request) {
+// 	if r.Method == "GET" || r.Method == "OPTIONS" {
+// 		w.Header().Add("Access-Control-Allow-Origin", "*")
+// 		w.Header().Add("Access-Control-Allow-Headers", "*")
+
+// 		if r.Method == "OPTIONS" {
+// 			w.WriteHeader(http.StatusOK)
+// 			return
+// 		}
+
+// 		db = connectDB()
+
+// 		sql := "select * from Invoices where invoice_id = 3"
+
+// 		rows, err := db.Query(sql)
+// 		if err != nil {
+// 			http.Error(w, err.Error(), http.StatusInternalServerError)
+// 			return
+// 		}
+
+// 		defer rows.Close()
+
+// 		var tempData []InvoiceFromDB
+// 		for rows.Next() {
+// 			var item InvoiceFromDB
+// 			if err := rows.Scan(&item.Invoice_id, &item.ID, &item.Item, &item.Quantity, &item.Amount, &item.Status, &item.FirstName, &item.LastName); err != nil {
+// 				http.Error(w, err.Error(), http.StatusInternalServerError)
+// 			}
+// 			tempData = append(tempData, item)
+// 		}
+
+// 		if len(tempData) > 0 {
+// 			json.NewEncoder(w).Encode(tempData)
+// 			w.WriteHeader(http.StatusOK)
+
+// 		}
+// 		w.WriteHeader(http.StatusNoContent)
+
+// 		db.Close()
+// 	}
+// }
 
 func main() {
 
