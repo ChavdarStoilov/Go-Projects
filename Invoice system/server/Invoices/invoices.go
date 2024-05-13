@@ -7,11 +7,13 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"strconv"
 
 	_ "github.com/go-sql-driver/mysql"
 )
 
 type InvoiceItems struct {
+	ID         int64   `json:"id"`
 	Item       string  `json:"items"`
 	Quantity   int     `json:"quantity"`
 	Price      float64 `json:"price"`
@@ -161,52 +163,61 @@ func CraeteNewInvoice(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// func GetinvoiceData(w http.ResponseWriter, r *http.Request) {
-// 	if r.Method == "GET" || r.Method == "OPTIONS" {
-// 		w.Header().Add("Access-Control-Allow-Origin", "*")
-// 		w.Header().Add("Access-Control-Allow-Headers", "*")
+func GetinvoiceData(w http.ResponseWriter, r *http.Request) {
+	if r.Method == "GET" || r.Method == "OPTIONS" {
+		w.Header().Add("Access-Control-Allow-Origin", "*")
+		w.Header().Add("Access-Control-Allow-Headers", "*")
 
-// 		if r.Method == "OPTIONS" {
-// 			w.WriteHeader(http.StatusOK)
-// 			return
-// 		}
+		if r.Method == "OPTIONS" {
+			w.WriteHeader(http.StatusOK)
+			return
+		}
 
-// 		db = connectDB()
+		id := r.URL.Query().Get("id")
 
-// 		sql := "select * from Invoices where invoice_id = 3"
+		intId, err := strconv.ParseInt(id, 10, 64)
+		if err != nil {
+			fmt.Println(err)
+		}
 
-// 		rows, err := db.Query(sql)
-// 		if err != nil {
-// 			http.Error(w, err.Error(), http.StatusInternalServerError)
-// 			return
-// 		}
+		db = connectDB()
 
-// 		defer rows.Close()
+		sql := fmt.Sprintf("select i.ID, i.invoice_id, i.Items, i.Quantity, i.Price, i.Amount from Invoices i where i.invoice_id = %d;", intId)
 
-// 		var tempData []InvoiceFromDB
-// 		for rows.Next() {
-// 			var item InvoiceFromDB
-// 			if err := rows.Scan(&item.Invoice_id, &item.ID, &item.Item, &item.Quantity, &item.Amount, &item.Status, &item.FirstName, &item.LastName); err != nil {
-// 				http.Error(w, err.Error(), http.StatusInternalServerError)
-// 			}
-// 			tempData = append(tempData, item)
-// 		}
+		rows, err := db.Query(sql)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
 
-// 		if len(tempData) > 0 {
-// 			json.NewEncoder(w).Encode(tempData)
-// 			w.WriteHeader(http.StatusOK)
+		defer rows.Close()
 
-// 		}
-// 		w.WriteHeader(http.StatusNoContent)
+		var tempData []InvoiceItems
+		for rows.Next() {
+			var item InvoiceItems
+			if err := rows.Scan(&item.ID, &item.Invoice_id, &item.Item, &item.Quantity, &item.Price, &item.Amount); err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+			}
+			tempData = append(tempData, item)
+		}
 
-// 		db.Close()
-// 	}
-// }
+		if len(tempData) > 0 {
+			json.NewEncoder(w).Encode(tempData)
+			w.WriteHeader(http.StatusOK)
+
+		}
+
+		w.WriteHeader(http.StatusNoContent)
+
+		db.Close()
+	}
+}
 
 func main() {
 
 	http.HandleFunc("/", DisplayAllInvoices)
 	http.HandleFunc("/create/", CraeteNewInvoice)
+	http.HandleFunc("/get_invoice", GetinvoiceData)
 
 	log.Fatal(http.ListenAndServe(":8883", nil))
 }

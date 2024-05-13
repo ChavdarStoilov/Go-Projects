@@ -12,6 +12,7 @@ export const GetAllClients = async () => request.get(ClientsBaseUrl);
 
 export const GetAllInvoices = async () => request.get(InvoiceBaseUrl);
 
+export const GetInvoiceData = async (id) => request.get(`${InvoiceBaseUrl}get_invoice?id=${id}`);
 
 // Create in db
 
@@ -20,6 +21,8 @@ export const CreateBrandData = async (data) => request.post(`${BrandBaseUrl}crea
 export const CreateNewInvoice = async (data) => request.post(`${InvoiceBaseUrl}create/`, data)
 
 export const CreateNewClient = async (data) => request.post(`${ClientsBaseUrl}create/`, data)
+
+
 
 
 

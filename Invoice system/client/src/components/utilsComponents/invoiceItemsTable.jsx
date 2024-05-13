@@ -17,6 +17,8 @@ export default function InvoiceItemsTable({ invoice }) {
     };
     const [opened, setOpen] = useState(false);
 
+
+
     return (
         <>
             {opened[0] && (
@@ -72,7 +74,7 @@ export default function InvoiceItemsTable({ invoice }) {
                                 variant="gradient"
                                 size="compact-sm"
                                 gradient={{ from: "blue", to: "cyan", deg: 90 }}
-                                onClick={() => setOpen([true, item.invoice_id])}
+                                onClick={() => setOpen([true, key])}
                             >
                                 Open Invoice
                             </Button>
