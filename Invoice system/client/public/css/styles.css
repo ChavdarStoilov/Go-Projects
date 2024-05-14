@@ -473,3 +473,7 @@ body {
   display: flex;
   justify-content: center;
 }
+
+.HomeLoading  {
+  margin: auto !important;
+}
