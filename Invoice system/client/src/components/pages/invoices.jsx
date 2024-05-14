@@ -1,14 +1,20 @@
 import { useEffect, useState } from "react";
-import { Button, Loader } from "@mantine/core";
+import { Button, Loader, Pagination } from "@mantine/core";
 import NewInvoiceModal from "../modals/newInvoice";
 import InvoiceItemsTable from "../utilsComponents/invoiceItemsTable";
 import * as api from "../../api/data";
+import PaginationData from "../utilsComponents/paginations"
 
-export default function Invoices({brand}) {
+
+
+export default function Invoices({ brand }) {
     const [invoiceData, setInvoiceData] = useState(false);
     const [openNewInvoice, setOpenNewInvoice] = useState(false);
     const [refresh, setRefresh] = useState(false);
     const [loader, setLoader] = useState(true);
+    const [activePage, setPage] = useState(1);
+    const [data, setData] = useState([]);
+    const itemsPerPage = 2;
 
     const openNewInvoiceHander = () => setOpenNewInvoice(true);
     const closeNewInvoiceHander = () => setOpenNewInvoice(false);
@@ -27,8 +33,11 @@ export default function Invoices({brand}) {
             })
             .finally(() => {
                 setLoader(false);
+                setData(PaginationData(invoiceData, itemsPerPage))
             });
     }, [refresh]);
+
+    
 
     return (
         <>
@@ -58,8 +67,17 @@ export default function Invoices({brand}) {
                             <div className="product-cell price"></div>
                         </div>
 
-                        <InvoiceItemsTable invoice={invoiceData} brand={brand} />
+                        <InvoiceItemsTable
+                            invoice={data && data[activePage - 1]}
+                            brand={brand}
+                        />
                     </div>
+                    <Pagination
+                        total={invoiceData.slice(itemsPerPage).length}
+                        value={activePage}
+                        onChange={setPage}
+                        mt="xl"
+                    />
                 </>
             ) : (
                 <Loader color="blue" type="dots" className="loader" size={50} />

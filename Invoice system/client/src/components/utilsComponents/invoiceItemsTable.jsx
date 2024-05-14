@@ -17,7 +17,6 @@ export default function InvoiceItemsTable({ invoice, brand }) {
     const [opened, setOpen] = useState(false);
 
 
-
     return (
         <>
             {opened[0] && (
