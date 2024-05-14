@@ -8,7 +8,7 @@ import PaginationData from "../utilsComponents/paginations"
 
 
 export default function Invoices({ brand }) {
-    const [invoiceData, setInvoiceData] = useState(false);
+    const [invoiceData, setInvoiceData] = useState([]);
     const [openNewInvoice, setOpenNewInvoice] = useState(false);
     const [refresh, setRefresh] = useState(false);
     const [loader, setLoader] = useState(true);
@@ -26,6 +26,8 @@ export default function Invoices({ brand }) {
             .then((result) => {
                 if (result.status === 200) {
                     setInvoiceData(result.data);
+                    setData(PaginationData(result.data.length && result.data, itemsPerPage))
+
                 }
             })
             .catch((error) => {
@@ -33,11 +35,9 @@ export default function Invoices({ brand }) {
             })
             .finally(() => {
                 setLoader(false);
-                setData(PaginationData(invoiceData, itemsPerPage))
             });
     }, [refresh]);
 
-    
 
     return (
         <>
@@ -68,7 +68,7 @@ export default function Invoices({ brand }) {
                         </div>
 
                         <InvoiceItemsTable
-                            invoice={data && data[activePage - 1]}
+                            invoice={data.length && data[activePage - 1]}
                             brand={brand}
                         />
                     </div>

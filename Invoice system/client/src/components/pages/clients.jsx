@@ -1,14 +1,19 @@
 import { useEffect, useState } from "react";
-import { Button, Loader } from "@mantine/core";
+import { Button, Loader, Pagination } from "@mantine/core";
 import ClientsItemsTable from "../utilsComponents/clientsItemsTable";
 import * as api from "../../api/data";
 import NewClientsModal from "../modals/newClients";
+import PaginationData from "../utilsComponents/paginations";
 
 export default function Clients() {
-    const [clientsData, setClientsData] = useState({});
+    const [clientsData, setClientsData] = useState([]);
     const [openNewClients, setOpenNewClients] = useState(false);
     const [refresh, setRefresh] = useState(false);
     const [loader, setLoader] = useState(true);
+    const [activePage, setPage] = useState(1);
+
+    const [data, setData] = useState([]);
+    const itemsPerPage = 2;
 
     const openNewClientsHander = () => setOpenNewClients(true);
     const closeNewClientsHander = () => setOpenNewClients(false);
@@ -20,6 +25,7 @@ export default function Clients() {
             .then((result) => {
                 if (result.status === 200) {
                     setClientsData(result.data);
+                    setData(PaginationData(result.data.length && result.data, itemsPerPage))
                 }
             })
             .catch((error) => {
@@ -29,6 +35,7 @@ export default function Clients() {
                 setLoader(false);
             });
     }, [refresh]);
+
 
     return (
         <>
@@ -56,16 +63,19 @@ export default function Clients() {
                             <div className="product-cell"></div>
                         </div>
 
-                        <ClientsItemsTable clients={clientsData} />
+                        <ClientsItemsTable
+                            clients={data.length && data[activePage - 1]}
+                        />
                     </div>
-                </> 
+                    <Pagination
+                        total={clientsData.slice(itemsPerPage).length}
+                        value={activePage}
+                        onChange={setPage}
+                        mt="xl"
+                    />
+                </>
             ) : (
-                <Loader
-                    color="blue"
-                    type="dots"
-                    className="loader"
-                    size={50}
-                />
+                <Loader color="blue" type="dots" className="loader" size={50} />
             )}
         </>
     );
