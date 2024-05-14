@@ -71,7 +71,8 @@ export default function Clients() {
                         total={clientsData.slice(itemsPerPage).length}
                         value={activePage}
                         onChange={setPage}
-                        mt="xl"
+                        size="sm" 
+                        radius="lg"
                     />
                 </>
             ) : (

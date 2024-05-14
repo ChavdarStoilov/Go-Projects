@@ -76,7 +76,8 @@ export default function Invoices({ brand }) {
                         total={invoiceData.slice(itemsPerPage).length}
                         value={activePage}
                         onChange={setPage}
-                        mt="xl"
+                        size="sm" 
+                        radius="lg"
                     />
                 </>
             ) : (

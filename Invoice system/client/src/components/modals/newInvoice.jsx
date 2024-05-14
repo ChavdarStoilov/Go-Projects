@@ -66,7 +66,7 @@ export default function NewInvoiceModal({ open, close, refreshing }) {
 
     return (
         <>
-            <Modal opened={open} onClose={close}>
+            <Modal opened={open} onClose={close} size="lg">
                 <Fieldset legend="Invoice information">
                     <TableNewInvoieItem data={invoice} remove={removeInvoice} />
                 </Fieldset>

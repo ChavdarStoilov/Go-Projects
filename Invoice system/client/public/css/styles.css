@@ -465,5 +465,11 @@ body {
 }
 
 .m_4addd315  {
-  margin: 40px auto !important; 
+  margin: 40px auto 0px auto !important; 
+}
+
+.pagination-new-invoice {
+  width: 150px ;
+  display: flex;
+  justify-content: center;
 }
