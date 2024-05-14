@@ -62,9 +62,11 @@ export default function Invoices({ brand }) {
                             <div className="product-cell status-cell">
                                 Status
                             </div>
-                            <div className="product-cell price">Cusotmer</div>
-                            <div className="product-cell price">Amount</div>
-                            <div className="product-cell price"></div>
+                            <div className="product-cell">Cusotmer</div>
+                            <div className="product-cell">Amount</div>
+                            <div className="product-cell"></div>
+                            <div className="product-cell" style={{ maxWidth: "80px" }}></div>
+
                         </div>
 
                         <InvoiceItemsTable

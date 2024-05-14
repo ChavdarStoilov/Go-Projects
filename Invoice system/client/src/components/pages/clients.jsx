@@ -61,6 +61,8 @@ export default function Clients() {
                             <div className="product-cell">Last Name</div>
                             <div className="product-cell">Phone</div>
                             <div className="product-cell"></div>
+                            <div className="product-cell" style={{ maxWidth: "80px" }}></div>
+
                         </div>
 
                         <ClientsItemsTable

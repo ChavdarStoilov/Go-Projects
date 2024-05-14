@@ -1,12 +1,6 @@
-import {
-    Badge,
-    Button,
-    NumberFormatter,
-    Modal,
-    Box,
-} from "@mantine/core";
+import { Badge, Button, NumberFormatter, Modal, Box } from "@mantine/core";
 import { useState } from "react";
-import InvoiceTemplate from "./invoiceTemplate"
+import InvoiceTemplate from "./invoiceTemplate";
 
 export default function InvoiceItemsTable({ invoice, brand }) {
     const Statuses = {
@@ -16,7 +10,6 @@ export default function InvoiceItemsTable({ invoice, brand }) {
     };
     const [opened, setOpen] = useState(false);
 
-
     return (
         <>
             {opened[0] && (
@@ -25,7 +18,10 @@ export default function InvoiceItemsTable({ invoice, brand }) {
                     onClose={() => setOpen(false)}
                     size="lg"
                 >
-                    <InvoiceTemplate invoiceData={invoice[opened[1]]} brand={brand}/>
+                    <InvoiceTemplate
+                        invoiceData={invoice[opened[1]]}
+                        brand={brand}
+                    />
                     <Box
                         style={{
                             marginTop: "20px",
@@ -75,6 +71,14 @@ export default function InvoiceItemsTable({ invoice, brand }) {
                             >
                                 Open Invoice
                             </Button>
+                        </div>
+                        <div
+                            className="product-cell"
+                            style={{ maxWidth: "80px" }}
+                        >
+                            <span style={{ cursor: "pointer", color: "red" }}>
+                                X
+                            </span>
                         </div>
                     </div>
                 ))}

@@ -66,6 +66,14 @@ export default function ClientsItemsTable({ clients }) {
                                 Open client
                             </Button>
                         </div>
+                        <div
+                            className="product-cell"
+                            style={{ maxWidth: "80px" }}
+                        >
+                            <span style={{ cursor: "pointer", color: "red" }}>
+                                X
+                            </span>
+                        </div>
                     </div>
                 ))}
         </>
