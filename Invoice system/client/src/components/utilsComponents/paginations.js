@@ -1,4 +1,6 @@
 function chunk(array, size) {
+
+    console.log(array);
     if (!array.length) {
         return [];
     }

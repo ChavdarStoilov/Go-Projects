@@ -12,7 +12,6 @@ export default function Clients() {
     const [loader, setLoader] = useState(true);
     const [activePage, setPage] = useState(1);
 
-    const [data, setData] = useState([]);
     const itemsPerPage = 2;
 
     const openNewClientsHander = () => setOpenNewClients(true);
@@ -20,12 +19,30 @@ export default function Clients() {
 
     const refreshHander = () => setRefresh(true);
 
+    const deletedClientHander = (deletedClient) => {
+        const ChangeData = clientsData.map((clients) =>
+            clients.filter((client) => client !== deletedClient)
+        );
+
+        if (ChangeData[activePage - 1].length === 0) {
+            clientsData.splice(activePage - 1, 1);
+            setPage(activePage - 1);
+            return;
+        }
+
+        setClientsData(ChangeData);
+    };
+
     useEffect(() => {
         api.GetAllClients()
             .then((result) => {
                 if (result.status === 200) {
-                    setClientsData(result.data);
-                    setData(PaginationData(result.data.length && result.data, itemsPerPage))
+                    if (result.data !== null) {
+                        // setClientsData(result.data);
+                        setClientsData(
+                            PaginationData(result.data, itemsPerPage)
+                        );
+                    }
                 }
             })
             .catch((error) => {
@@ -35,7 +52,6 @@ export default function Clients() {
                 setLoader(false);
             });
     }, [refresh]);
-
 
     return (
         <>
@@ -61,19 +77,25 @@ export default function Clients() {
                             <div className="product-cell">Last Name</div>
                             <div className="product-cell">Phone</div>
                             <div className="product-cell"></div>
-                            <div className="product-cell" style={{ maxWidth: "80px" }}></div>
-
+                            <div
+                                className="product-cell"
+                                style={{ maxWidth: "80px" }}
+                            ></div>
                         </div>
 
                         <ClientsItemsTable
-                            clients={data.length && data[activePage - 1]}
+                            clients={
+                                clientsData.length &&
+                                clientsData[activePage - 1]
+                            }
+                            deleteHander={deletedClientHander}
                         />
                     </div>
                     <Pagination
-                        total={clientsData.slice(itemsPerPage).length}
+                        total={clientsData.length ? clientsData.length : 1}
                         value={activePage}
                         onChange={setPage}
-                        size="sm" 
+                        size="sm"
                         radius="lg"
                     />
                 </>

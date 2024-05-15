@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strconv"
 
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -105,10 +106,64 @@ func CreateNewClient(w http.ResponseWriter, r *http.Request) {
 
 }
 
+func UpdateClient(w http.ResponseWriter, r *http.Request) {
+
+}
+
+func DeleteClient(w http.ResponseWriter, r *http.Request) {
+
+	if r.Method == "DELETE" || r.Method == "OPTIONS" {
+
+		w.Header().Add("Access-Control-Allow-Origin", "*")
+		w.Header().Add("Access-Control-Allow-Headers", "*")
+		w.Header().Add("Access-Control-Allow-Methods", "DELETE")
+		w.Header().Set("Content-Type", "application/json")
+
+		if r.Method == "OPTIONS" {
+			w.WriteHeader(http.StatusOK)
+			return
+		}
+
+		id := r.URL.Query().Get("id")
+
+		intId, err := strconv.ParseInt(id, 10, 64)
+		if err != nil {
+			fmt.Println(err)
+		}
+
+		queryClients := fmt.Sprintf("Delete from Clients where id = %d;", intId)
+		queryInvoices := fmt.Sprintf("Delete from Invoices where owner = %d;", intId)
+
+		db = connectDB()
+
+		rowsClients, err := db.Query(queryClients)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		defer rowsClients.Close()
+
+		rowsinvoices, err := db.Query(queryInvoices)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		defer rowsinvoices.Close()
+		db.Close()
+
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode("Deleted")
+
+	}
+
+}
+
 func main() {
 
 	http.HandleFunc("/", DisplayAllClients)
 	http.HandleFunc("/create/", CreateNewClient)
+	http.HandleFunc("/delete", DeleteClient)
 
 	log.Fatal(http.ListenAndServe(":8881", nil))
 }

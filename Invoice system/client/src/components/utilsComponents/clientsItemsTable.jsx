@@ -1,8 +1,23 @@
 import { Button, Modal, TextInput, Box } from "@mantine/core";
 import { useState } from "react";
+import * as api from "../../api/data";
 
-export default function ClientsItemsTable({ clients }) {
+export default function ClientsItemsTable({ clients, deleteHander }) {
     const [opened, setOpen] = useState(false);
+
+
+    const deleteClient = (id, key) => {
+        api.DeleteClient(id)
+            .then((result) => {
+                if (result.status === 200 && result.data === "Deleted") {
+                    console.log(clients[key]);
+                    deleteHander(clients[key]);
+                }
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    };
 
     return (
         <>
@@ -70,7 +85,10 @@ export default function ClientsItemsTable({ clients }) {
                             className="product-cell"
                             style={{ maxWidth: "80px" }}
                         >
-                            <span style={{ cursor: "pointer", color: "red" }}>
+                            <span
+                                style={{ cursor: "pointer", color: "red" }}
+                                onClick={() => deleteClient(item.id, key)}
+                            >
                                 X
                             </span>
                         </div>

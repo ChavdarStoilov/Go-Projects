@@ -1,14 +1,29 @@
 import { Badge, Button, NumberFormatter, Modal, Box } from "@mantine/core";
 import { useState } from "react";
 import InvoiceTemplate from "./invoiceTemplate";
+import * as api from  "../../api/data"
 
-export default function InvoiceItemsTable({ invoice, brand }) {
+export default function InvoiceItemsTable({ invoice, brand, deleteHandler }) {
     const Statuses = {
         active: "yellow",
         completed: "green",
         rejected: "red",
     };
     const [opened, setOpen] = useState(false);
+
+    const deleteInvoice = (id, key) => {
+
+        api.DeleteInvoice(id)
+            .then((result) => {
+                if (result.status === 200 && result.data === "Deleted") {
+                    deleteHandler(invoice[key]);
+                }
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    };
+
 
     return (
         <>
@@ -34,7 +49,7 @@ export default function InvoiceItemsTable({ invoice, brand }) {
                 </Modal>
             )}
 
-            {invoice &&
+            {invoice.length > 0 &&
                 invoice.map((item, key) => (
                     <div className="products-row" key={key}>
                         <div className="product-cell">
@@ -76,7 +91,10 @@ export default function InvoiceItemsTable({ invoice, brand }) {
                             className="product-cell"
                             style={{ maxWidth: "80px" }}
                         >
-                            <span style={{ cursor: "pointer", color: "red" }}>
+                            <span
+                                style={{ cursor: "pointer", color: "red" }}
+                                onClick={() => deleteInvoice(item.id, key)}
+                            >
                                 X
                             </span>
                         </div>

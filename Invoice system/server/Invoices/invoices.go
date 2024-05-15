@@ -20,9 +20,12 @@ type InvoiceItems struct {
 	Amount     float64 `json:"amount"`
 	Status     int     `json:"status"`
 	Invoice_id int64   `json:"invoice_id"`
+	Owner      int64   `json:"owner"`
 }
 
 type InvoiceFromDB struct {
+	ID int64 `json:"id"`
+
 	Item       string  `json:"items"`
 	Quantity   int     `json:"quantity"`
 	Status     string  `json:"status"`
@@ -67,7 +70,7 @@ func DisplayAllInvoices(w http.ResponseWriter, r *http.Request) {
 		db = connectDB()
 
 		rows, err := db.Query(`
-			select i.invoice_id, i.Items, i.Quantity, sum(i.Amount), s.status, c.first_name, c.last_name 
+			select i.id, i.invoice_id, i.Items, i.Quantity, sum(i.Amount), s.status, c.first_name, c.last_name 
 				from Invoices i 
 				Inner join status_type s on i.status = s.id 
 				Inner join Clients c on i.owner = c.id 
@@ -83,7 +86,7 @@ func DisplayAllInvoices(w http.ResponseWriter, r *http.Request) {
 		var tempData []InvoiceFromDB
 		for rows.Next() {
 			var item InvoiceFromDB
-			if err := rows.Scan(&item.Invoice_id, &item.Item, &item.Quantity, &item.Amount, &item.Status, &item.FirstName, &item.LastName); err != nil {
+			if err := rows.Scan(&item.ID, &item.Invoice_id, &item.Item, &item.Quantity, &item.Amount, &item.Status, &item.FirstName, &item.LastName); err != nil {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 			}
 			tempData = append(tempData, item)
@@ -146,7 +149,7 @@ func CraeteNewInvoice(w http.ResponseWriter, r *http.Request) {
 			} else {
 				sing += ","
 			}
-			sql += fmt.Sprintf("(%d, '%v', %d, %f, %d, %f, %d)%v", idx+1, data[item].Item, data[item].Quantity, data[item].Price, data[item].Status, data[item].Amount, 1, sing)
+			sql += fmt.Sprintf("(%d, '%v', %d, %f, %d, %f, %d)%v", idx+1, data[item].Item, data[item].Quantity, data[item].Price, data[item].Status, data[item].Amount, data[item].Owner, sing)
 		}
 
 		rows, errSql := db.Query(sql)
@@ -213,11 +216,53 @@ func GetinvoiceData(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func DeleteInvoice(w http.ResponseWriter, r *http.Request) {
+
+	if r.Method == "DELETE" || r.Method == "OPTIONS" {
+
+		w.Header().Add("Access-Control-Allow-Origin", "*")
+		w.Header().Add("Access-Control-Allow-Headers", "*")
+		w.Header().Add("Access-Control-Allow-Methods", "DELETE")
+		w.Header().Set("Content-Type", "application/json")
+
+		if r.Method == "OPTIONS" {
+			w.WriteHeader(http.StatusOK)
+			return
+		}
+
+		id := r.URL.Query().Get("id")
+
+		intId, err := strconv.ParseInt(id, 10, 64)
+		if err != nil {
+			fmt.Println(err)
+		}
+
+		queryInvoices := fmt.Sprintf("Delete from Invoices where id = %d;", intId)
+
+		db = connectDB()
+
+		rowsinvoices, err := db.Query(queryInvoices)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		defer rowsinvoices.Close()
+		db.Close()
+
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode("Deleted")
+
+	}
+
+}
+
 func main() {
 
 	http.HandleFunc("/", DisplayAllInvoices)
 	http.HandleFunc("/create/", CraeteNewInvoice)
 	http.HandleFunc("/get_invoice", GetinvoiceData)
+	http.HandleFunc("/delete", DeleteInvoice)
 
 	log.Fatal(http.ListenAndServe(":8883", nil))
 }
