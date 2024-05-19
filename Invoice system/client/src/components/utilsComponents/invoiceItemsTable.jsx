@@ -1,9 +1,24 @@
-import { Badge, Button, NumberFormatter, Modal, Box } from "@mantine/core";
+import {
+    Badge,
+    Button,
+    NumberFormatter,
+    Modal,
+    Box,
+    Notification,
+    Transition,
+} from "@mantine/core";
 import { useState } from "react";
 import InvoiceTemplate from "./invoiceTemplate";
-import * as api from  "../../api/data"
+import * as api from "../../api/data";
 
 export default function InvoiceItemsTable({ invoice, brand, deleteHandler }) {
+    const [notify, setNofity] = useState(false);
+    const [notifyLoader, setNofityLoader] = useState({
+        status: false,
+        title: "Are you sure?",
+        message: "Default",
+    });
+
     const Statuses = {
         active: "yellow",
         completed: "green",
@@ -12,21 +27,77 @@ export default function InvoiceItemsTable({ invoice, brand, deleteHandler }) {
     const [opened, setOpen] = useState(false);
 
     const deleteInvoice = (id, key) => {
+        setNofityLoader({
+            status: true,
+            title: "Loading...",
+            message: "Record deletion starting...",
+        });
 
         api.DeleteInvoice(id)
             .then((result) => {
                 if (result.status === 200 && result.data === "Deleted") {
+                    setNofityLoader({
+                        status: false,
+                        title: "All good!",
+                        message: "Record deleted successfully!",
+                    });
+
                     deleteHandler(invoice[key]);
                 }
             })
             .catch((error) => {
                 console.log(error);
+            })
+            .finally(() => {
+                setTimeout(() => {
+                    setNofity(false);
+                }, 800);
             });
     };
 
-
     return (
         <>
+            <Transition
+                mounted={notify[0]}
+                transition="slide-left"
+                duration={400}
+                timingFunction="ease"
+            >
+                {(styles) => (
+                    <Notification
+                        color="red"
+                        title={notifyLoader.title}
+                        className="deleteNofify"
+                        radius="md"
+                        style={styles}
+                        loading={notifyLoader.status}
+                        onClose={() => setNofity(false)}
+                    >
+                        {notifyLoader.message === "Default" ? (
+                            <Box
+                                style={{
+                                    display: "flex",
+                                    gap: "20px",
+                                    marginTop: "20px",
+                                }}
+                            >
+                                <Button
+                                    onClick={() =>
+                                        deleteInvoice(notify[1], notify[2])
+                                    }
+                                >
+                                    Yes
+                                </Button>
+                                <Button onClick={() => setNofity(false)}>
+                                    No
+                                </Button>
+                            </Box>
+                        ) : (
+                            notifyLoader.message
+                        )}
+                    </Notification>
+                )}
+            </Transition>
             {opened[0] && (
                 <Modal
                     opened={opened[0]}
@@ -93,7 +164,9 @@ export default function InvoiceItemsTable({ invoice, brand, deleteHandler }) {
                         >
                             <span
                                 style={{ cursor: "pointer", color: "red" }}
-                                onClick={() => deleteInvoice(item.invoice_id, key)}
+                                onClick={() =>
+                                    setNofity([true, item.invoice_id, key])
+                                }
                             >
                                 X
                             </span>

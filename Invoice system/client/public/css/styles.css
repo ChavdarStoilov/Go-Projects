@@ -477,3 +477,10 @@ body {
 .HomeLoading  {
   margin: auto !important;
 }
+
+.deleteNofify {
+  position: absolute !important;
+  top: 10px !important;
+  right: 10px !important;
+  width: 400px !important;
+}
