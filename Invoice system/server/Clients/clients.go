@@ -30,6 +30,13 @@ func connectDB() *sql.DB {
 	return db
 }
 
+func DiffValue(r string, q string) string {
+	if r != q {
+		return r
+	}
+	return q
+}
+
 func DisplayAllClients(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" || r.Method == "OPTIONS" {
 
@@ -108,6 +115,63 @@ func CreateNewClient(w http.ResponseWriter, r *http.Request) {
 
 func UpdateClient(w http.ResponseWriter, r *http.Request) {
 
+	if r.Method == "PUT" || r.Method == "OPTIONS" {
+
+		w.Header().Add("Access-Control-Allow-Origin", "*")
+		w.Header().Add("Access-Control-Allow-Headers", "*")
+		w.Header().Add("Access-Control-Allow-Methods", "PUT")
+
+		w.Header().Set("Content-Type", "application/json")
+
+		if r.Method == "OPTIONS" {
+			w.WriteHeader(http.StatusOK)
+			return
+		}
+
+		RequestClient := new(Clients)
+
+		var QueryClient Clients
+
+		errRequest := json.NewDecoder(r.Body).Decode(RequestClient)
+
+		if errRequest != nil {
+			panic(errRequest)
+		}
+
+		querySelect := fmt.Sprintf("Select * from Clients where id = %d;", RequestClient.ID)
+
+		db = connectDB()
+
+		querySelectErr := db.QueryRow(querySelect).Scan(&QueryClient.ID, &QueryClient.FirstName, &QueryClient.LastName, &QueryClient.Phone)
+
+		if querySelectErr != nil {
+			http.Error(w, querySelectErr.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		queryUpdate := fmt.Sprintf("UPDATE Clients SET First_name = '%v', Last_name = '%v', Phone= '%v' WHERE id =%d;",
+			DiffValue(RequestClient.FirstName, QueryClient.FirstName),
+			DiffValue(RequestClient.LastName, QueryClient.LastName),
+			DiffValue(RequestClient.Phone, QueryClient.Phone),
+			RequestClient.ID,
+		)
+
+		quaryUpdateResult, queryUpdateErr := db.Query(queryUpdate)
+
+		if queryUpdateErr != nil {
+			http.Error(w, queryUpdateErr.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		quaryUpdateResult.Close()
+
+		db.Close()
+
+		w.WriteHeader(http.StatusOK)
+
+		json.NewEncoder(w).Encode("Updated")
+
+	}
 }
 
 func DeleteClient(w http.ResponseWriter, r *http.Request) {
@@ -164,6 +228,7 @@ func main() {
 	http.HandleFunc("/", DisplayAllClients)
 	http.HandleFunc("/create/", CreateNewClient)
 	http.HandleFunc("/delete", DeleteClient)
+	http.HandleFunc("/update/", UpdateClient)
 
 	log.Fatal(http.ListenAndServe(":8881", nil))
 }
