@@ -30,3 +30,8 @@ export const CreateNewClient = async (data) => request.post(`${ClientsBaseUrl}cr
 export const DeleteClient = async (id) => request.del(`${ClientsBaseUrl}delete?id=${id}`)
 
 export const DeleteInvoice = async (id) => request.del(`${InvoiceBaseUrl}delete?id=${id}`)
+
+
+// Update in db
+
+export const UpdateClient = async (data) => request.put(`${ClientsBaseUrl}update/`, data)

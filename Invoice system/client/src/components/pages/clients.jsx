@@ -19,6 +19,14 @@ export default function Clients() {
 
     const refreshHander = () => setRefresh(true);
 
+    const updateClients = (newData) => {
+        setClientsData(
+            clientsData.map((client) =>
+                client.id === newData.id ? (client = newData) : client
+            )
+        );
+    };
+
     const deletedClientHander = (deletedClient) => {
         const ChangeData = clientsData.map((clients) =>
             clients.filter((client) => client !== deletedClient)
@@ -89,6 +97,7 @@ export default function Clients() {
                                 clientsData[activePage - 1]
                             }
                             deleteHander={deletedClientHander}
+                            update={updateClients}
                         />
                     </div>
                     <Pagination

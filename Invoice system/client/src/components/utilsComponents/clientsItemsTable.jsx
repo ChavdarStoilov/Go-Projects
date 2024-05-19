@@ -2,9 +2,8 @@ import { Button, Modal, TextInput, Box } from "@mantine/core";
 import { useState } from "react";
 import * as api from "../../api/data";
 
-export default function ClientsItemsTable({ clients, deleteHander }) {
+export default function ClientsItemsTable({ clients, deleteHander, update}) {
     const [opened, setOpen] = useState(false);
-
 
     const deleteClient = (id, key) => {
         api.DeleteClient(id)
@@ -19,6 +18,28 @@ export default function ClientsItemsTable({ clients, deleteHander }) {
             });
     };
 
+    const updateClient = (e) => {
+        e.preventDefault();
+
+        const form = e.target;
+
+        const data = Object.fromEntries(new FormData(form));
+
+        data["id"] = clients[opened[1]].id, data
+
+        api.UpdateClient(data)
+            .then((result) => {
+                console.log(result);
+            })
+            .catch((error) => {
+                logger.error(error);
+            })
+            .finally(() => {
+                update(data);
+                setOpen(false);
+            });
+    };
+
     return (
         <>
             {opened[0] && (
@@ -27,31 +48,38 @@ export default function ClientsItemsTable({ clients, deleteHander }) {
                     onClose={() => setOpen(false)}
                     title="Client details"
                 >
-                    <TextInput
-                        label="First name"
-                        required
-                        defaultValue={clients[opened[1]].first_name}
-                    />
-                    <TextInput
-                        label="Last name"
-                        required
-                        defaultValue={clients[opened[1]].last_name}
-                    />
-                    <TextInput
-                        label="Phone"
-                        required
-                        defaultValue={clients[opened[1]].phone}
-                    />
-                    <Box
-                        style={{
-                            marginTop: "20px",
-                            display: "flex",
-                            justifyContent: "space-evenly",
-                        }}
-                    >
-                        <Button>Save</Button>
-                        <Button onClick={() => setOpen(false)}>Close</Button>
-                    </Box>
+                    <form onSubmit={updateClient}>
+                        <TextInput
+                            label="First name"
+                            required
+                            defaultValue={clients[opened[1]].first_name}
+                            name="first_name"
+                        />
+                        <TextInput
+                            label="Last name"
+                            required
+                            defaultValue={clients[opened[1]].last_name}
+                            name="last_name"
+                        />
+                        <TextInput
+                            label="Phone"
+                            required
+                            defaultValue={clients[opened[1]].phone}
+                            name="phone"
+                        />
+                        <Box
+                            style={{
+                                marginTop: "20px",
+                                display: "flex",
+                                justifyContent: "space-evenly",
+                            }}
+                        >
+                            <Button type="submit">Save</Button>
+                            <Button onClick={() => setOpen(false)}>
+                                Close
+                            </Button>
+                        </Box>
+                    </form>
                 </Modal>
             )}
 
