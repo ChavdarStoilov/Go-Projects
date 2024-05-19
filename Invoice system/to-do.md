@@ -9,13 +9,11 @@
     - &#x2610; Implement CRUD operations for Invoices
         - &#x2611; Implement REST API to create invoices in the database
         - &#x2611; Implement REST API to read invoices from the database
-        - &#x2610; Implement REST API to update invoices from the database
         - &#x2611; Implement REST API to Delete invoices from the database
 4. &#x2610; Create functionality in the front end (FE) for Invoices
     - &#x2611; Page for presenting all invoices from the database via the REST API
     - &#x2611; Functionality for creating invoices from the FE and sending them to the database via the REST API
     - &#x2611; Functionality for deleting invoices from the FE and sending the requests to the database via the REST API
-    - &#x2610; Functionality for updating invoices from the FE and sending the changes to the database via the REST API
 5. &#x2610; Create a Go REST API app for Customers
     - &#x2610; Implement CRUD operations for Customers
         - &#x2611; Implement REST API to create customers in the database
