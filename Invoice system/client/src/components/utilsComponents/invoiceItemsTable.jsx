@@ -93,7 +93,7 @@ export default function InvoiceItemsTable({ invoice, brand, deleteHandler }) {
                         >
                             <span
                                 style={{ cursor: "pointer", color: "red" }}
-                                onClick={() => deleteInvoice(item.id, key)}
+                                onClick={() => deleteInvoice(item.invoice_id, key)}
                             >
                                 X
                             </span>

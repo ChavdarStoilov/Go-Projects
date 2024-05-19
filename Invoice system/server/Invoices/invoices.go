@@ -237,7 +237,7 @@ func DeleteInvoice(w http.ResponseWriter, r *http.Request) {
 			fmt.Println(err)
 		}
 
-		queryInvoices := fmt.Sprintf("Delete from Invoices where id = %d;", intId)
+		queryInvoices := fmt.Sprintf("Delete from Invoices where invoice_id = %d;", intId)
 
 		db = connectDB()
 
