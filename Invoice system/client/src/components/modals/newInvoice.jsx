@@ -1,4 +1,6 @@
-import { Modal, Button, Box } from "@mantine/core";
+import { Modal, Button, Box, rem } from "@mantine/core";
+import { notifications } from "@mantine/notifications";
+import { IconCheck } from "@tabler/icons-react";
 import * as api from "../../api/data";
 import { useState, useEffect } from "react";
 import { TextInput, NumberInput, NativeSelect, Fieldset } from "@mantine/core";
@@ -35,6 +37,19 @@ export default function NewInvoiceModal({ open, close, adding }) {
         api.CreateNewInvoice(invoice)
             .then((result) => {
                 if (result.status === 200) {
+                    notifications.show({
+                        loading: false,
+                        autoClose: true,
+                        title: "Creating was finished!",
+                        message: "Record was created successfully!",
+                        color: "green",
+                        icon: (
+                            <IconCheck
+                                style={{ width: rem(18), height: rem(18) }}
+                            />
+                        ),
+                    });
+
                     adding(result.data);
                 }
             })
@@ -96,7 +111,7 @@ export default function NewInvoiceModal({ open, close, adding }) {
                         <NativeSelect
                             label="Clients"
                             required
-                            data={clients.length >0 && clients}
+                            data={clients.length > 0 && clients}
                             name="owner"
                         />
 
