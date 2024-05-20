@@ -159,7 +159,25 @@ func CraeteNewInvoice(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		defer rows.Close()
-		json.NewEncoder(w).Encode(data)
+
+		var tempInvoiceData InvoiceFromDB
+
+		queryInvoiceData := db.QueryRow(fmt.Sprintf(`
+			select i.id, i.invoice_id, i.Items, i.Quantity, sum(i.Amount), s.status, c.first_name, c.last_name 
+			from Invoices i 
+			Inner join status_type s on i.status = s.id 
+			Inner join Clients c on i.owner = c.id 
+			where invoice_id = %d 
+			GROUP BY i.invoice_id;`, idx)).Scan(&tempInvoiceData.ID, &tempInvoiceData.Invoice_id, &tempInvoiceData.Item, &tempInvoiceData.Quantity, &tempInvoiceData.Amount, &tempInvoiceData.Status, &tempInvoiceData.FirstName, &tempInvoiceData.LastName)
+
+		if queryInvoiceData != nil {
+			http.Error(w, queryInvoiceData.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		db.Close()
+
+		json.NewEncoder(w).Encode(tempInvoiceData)
 		w.WriteHeader(http.StatusCreated)
 
 		return

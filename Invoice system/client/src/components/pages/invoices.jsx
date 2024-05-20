@@ -29,12 +29,21 @@ export default function Invoices({ brand }) {
             return;
         }
 
-        setInvoiceData(ChangeData);
+        const tempResult = []
+        ChangeData.map((data) => tempResult.push(...data));
+
+        setInvoiceData(PaginationData(tempResult, itemsPerPage));
     };
 
     const addNewInvoice = (data) => {
-        invoiceData.map((invoiceRow, key) => key === invoiceData.length  && invoiceRow.length + 1 <= itemsPerPage ? invoiceRow.push(data) : invoiceData.push([data]))
-        // setInvoiceData([invoiceData, ...data]);
+        const lastIdx = invoiceData.length - 1;
+        if (invoiceData[lastIdx].length + 1 <= itemsPerPage) {
+            invoiceData[lastIdx].push(data);
+        } else {
+            invoiceData.push([data]);
+        }
+
+        setInvoiceData(invoiceData);
     };
 
     useEffect(() => {
