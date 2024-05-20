@@ -29,7 +29,7 @@ export default function Clients() {
         }
 
         setClientsData(clientsData);
-    }
+    };
 
     const updateClients = (newData) => {
         setClientsData(
@@ -102,13 +102,18 @@ export default function Clients() {
                             <div className="product-cell"></div>
                             <div
                                 className="product-cell"
-                                style={{ maxWidth: "80px" }}
-                            ><IconRefresh
-                            stroke={1}
-                            size={"18px"}
-                            className="refresh-btn"
-                            onClick={() => setRefresh(true)}
-                        /></div>
+                                style={{
+                                    maxWidth: "80px",
+                                    justifyContent: "right",
+                                }}
+                            >
+                                <IconRefresh
+                                    stroke={1}
+                                    size={"18px"}
+                                    className="refresh-btn"
+                                    onClick={() => setRefresh(true)}
+                                />
+                            </div>
                         </div>
 
                         <ClientsItemsTable

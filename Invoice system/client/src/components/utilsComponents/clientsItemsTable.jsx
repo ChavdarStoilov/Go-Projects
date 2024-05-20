@@ -1,6 +1,6 @@
 import { Button, Modal, TextInput, Box, rem } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
-import { IconQuestionMark, IconCheck  } from "@tabler/icons-react";
+import { IconQuestionMark, IconCheck } from "@tabler/icons-react";
 
 import { useState } from "react";
 import * as api from "../../api/data";
@@ -57,7 +57,11 @@ export default function ClientsItemsTable({ clients, deleteHander, update }) {
                         loading: false,
                         autoClose: true,
                         color: "green",
-                        icon: <IconCheck style={{ width: rem(18), height: rem(18) }} />,
+                        icon: (
+                            <IconCheck
+                                style={{ width: rem(18), height: rem(18) }}
+                            />
+                        ),
                         message: "Record was deleted successfully!",
                     });
                 }
@@ -78,7 +82,20 @@ export default function ClientsItemsTable({ clients, deleteHander, update }) {
 
         api.UpdateClient(data)
             .then((result) => {
-                console.log(result);
+                if (result.status === 200) {
+                    notifications.show({
+                        loading: false,
+                        autoClose: true,
+                        title: "Updating was finished!",
+                        message: "Record was updated successfully!",
+                        color: "green",
+                        icon: (
+                            <IconCheck
+                                style={{ width: rem(18), height: rem(18) }}
+                            />
+                        ),
+                    });
+                }
             })
             .catch((error) => {
                 logger.error(error);
