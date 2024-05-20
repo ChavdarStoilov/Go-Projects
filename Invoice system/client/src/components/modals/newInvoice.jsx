@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { TextInput, NumberInput, NativeSelect, Fieldset } from "@mantine/core";
 import TableNewInvoieItem from "../utilsComponents/tableNewInvoiceItem";
 
-export default function NewInvoiceModal({ open, close, refreshing, adding }) {
+export default function NewInvoiceModal({ open, close, adding }) {
     const [loading, setLoading] = useState(false);
     const [invoice, setInvoice] = useState([]);
     const [clients, setClients] = useState([]);

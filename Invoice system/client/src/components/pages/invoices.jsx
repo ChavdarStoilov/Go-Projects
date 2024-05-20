@@ -64,6 +64,7 @@ export default function Invoices({ brand }) {
             })
             .finally(() => {
                 setLoader(false);
+                setRefresh(false);
             });
     }, [refresh]);
 
@@ -75,7 +76,6 @@ export default function Invoices({ brand }) {
                         <NewInvoiceModal
                             open={openNewInvoice}
                             close={closeNewInvoiceHander}
-                            refreshing={refreshHander}
                             adding={addNewInvoice}
                         />
                     )}
@@ -98,7 +98,7 @@ export default function Invoices({ brand }) {
                                 className="product-cell"
                                 style={{ maxWidth: "80px", justifyContent: "right" }}
                             >
-                                <IconRefresh stroke={1} size={"18px"} className="refresh-btn"/>
+                                <IconRefresh stroke={1} size={"18px"} className="refresh-btn" onClick={() => setRefresh(true)}/>
                             </div>
                         </div>
 
