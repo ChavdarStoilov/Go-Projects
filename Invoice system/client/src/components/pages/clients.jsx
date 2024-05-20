@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { Button, Loader, Pagination } from "@mantine/core";
+import { IconRefresh } from "@tabler/icons-react";
+
 import ClientsItemsTable from "../utilsComponents/clientsItemsTable";
 import * as api from "../../api/data";
 import NewClientsModal from "../modals/newClients";
@@ -12,12 +14,22 @@ export default function Clients() {
     const [loader, setLoader] = useState(true);
     const [activePage, setPage] = useState(1);
 
-    const itemsPerPage = 2;
+    const itemsPerPage = 3;
 
     const openNewClientsHander = () => setOpenNewClients(true);
     const closeNewClientsHander = () => setOpenNewClients(false);
 
-    const refreshHander = () => setRefresh(true);
+    const addHandler = (data) => {
+        const lastIdx = clientsData.length - 1;
+
+        if (clientsData[lastIdx].length + 1 <= itemsPerPage) {
+            clientsData[lastIdx].push(data);
+        } else {
+            clientsData.push([data]);
+        }
+
+        setClientsData(clientsData);
+    }
 
     const updateClients = (newData) => {
         setClientsData(
@@ -38,7 +50,10 @@ export default function Clients() {
             return;
         }
 
-        setClientsData(ChangeData);
+        const tempResult = [];
+        ChangeData.map((data) => tempResult.push(...data));
+
+        setClientsData(PaginationData(tempResult, itemsPerPage));
     };
 
     useEffect(() => {
@@ -46,7 +61,6 @@ export default function Clients() {
             .then((result) => {
                 if (result.status === 200) {
                     if (result.data !== null) {
-                        // setClientsData(result.data);
                         setClientsData(
                             PaginationData(result.data, itemsPerPage)
                         );
@@ -58,6 +72,7 @@ export default function Clients() {
             })
             .finally(() => {
                 setLoader(false);
+                setRefresh(false);
             });
     }, [refresh]);
 
@@ -69,7 +84,7 @@ export default function Clients() {
                         <NewClientsModal
                             open={openNewClients}
                             close={closeNewClientsHander}
-                            refreshing={refreshHander}
+                            add={addHandler}
                         />
                     )}
                     <div className="app-content-header">
@@ -88,7 +103,12 @@ export default function Clients() {
                             <div
                                 className="product-cell"
                                 style={{ maxWidth: "80px" }}
-                            ></div>
+                            ><IconRefresh
+                            stroke={1}
+                            size={"18px"}
+                            className="refresh-btn"
+                            onClick={() => setRefresh(true)}
+                        /></div>
                         </div>
 
                         <ClientsItemsTable

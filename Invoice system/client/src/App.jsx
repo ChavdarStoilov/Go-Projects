@@ -1,6 +1,9 @@
 import HomePage from "./components/homePage";
 import { MantineProvider, Loader } from "@mantine/core";
+import { Notifications } from '@mantine/notifications';
 import { Routes, Route, useLocation } from "react-router-dom";
+
+import '@mantine/notifications/styles.css';
 import "@mantine/core/styles.css";
 import { useState, useEffect } from "react";
 import * as api from "./api/data";
@@ -35,6 +38,7 @@ function App() {
 
     return (
         <MantineProvider>
+            <Notifications position="top-right" />
             {!loading ? (
                 <>
                     <Menu

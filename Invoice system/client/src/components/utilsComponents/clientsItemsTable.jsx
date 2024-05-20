@@ -1,16 +1,65 @@
-import { Button, Modal, TextInput, Box } from "@mantine/core";
+import { Button, Modal, TextInput, Box, rem } from "@mantine/core";
+import { notifications } from "@mantine/notifications";
+import { IconQuestionMark, IconCheck  } from "@tabler/icons-react";
+
 import { useState } from "react";
 import * as api from "../../api/data";
 
-export default function ClientsItemsTable({ clients, deleteHander, update}) {
+export default function ClientsItemsTable({ clients, deleteHander, update }) {
     const [opened, setOpen] = useState(false);
 
-    const deleteClient = (id, key) => {
+    const notify = (id, key) => {
+        const idNotify = notifications.show({
+            title: "Are you sure you want to delete it!",
+            color: "red",
+            icon: <IconQuestionMark />,
+
+            message: (
+                <>
+                    <Box
+                        style={{
+                            display: "flex",
+                            gap: "20px",
+                            marginTop: "20px",
+                            justifyContent: "center",
+                        }}
+                    >
+                        <Button onClick={() => deleteClient(id, key, idNotify)}>
+                            Yes
+                        </Button>
+                        <Button onClick={() => notifications.hide(idNotify)}>
+                            No
+                        </Button>
+                    </Box>
+                </>
+            ),
+        });
+    };
+
+    const deleteClient = (id, key, idNotify) => {
+        notifications.update({
+            id: idNotify,
+            title: "Deleting record!",
+            loading: true,
+            autoClose: false,
+            color: "#2187df",
+            message: "Deleting record starting, please wait...",
+        });
+
         api.DeleteClient(id)
             .then((result) => {
                 if (result.status === 200 && result.data === "Deleted") {
-                    console.log(clients[key]);
                     deleteHander(clients[key]);
+
+                    notifications.update({
+                        id: idNotify,
+                        title: "Deleting finished!",
+                        loading: false,
+                        autoClose: true,
+                        color: "green",
+                        icon: <IconCheck style={{ width: rem(18), height: rem(18) }} />,
+                        message: "Record was deleted successfully!",
+                    });
                 }
             })
             .catch((error) => {
@@ -25,7 +74,7 @@ export default function ClientsItemsTable({ clients, deleteHander, update}) {
 
         const data = Object.fromEntries(new FormData(form));
 
-        data["id"] = clients[opened[1]].id, data
+        (data["id"] = clients[opened[1]].id), data;
 
         api.UpdateClient(data)
             .then((result) => {
@@ -115,7 +164,7 @@ export default function ClientsItemsTable({ clients, deleteHander, update}) {
                         >
                             <span
                                 style={{ cursor: "pointer", color: "red" }}
-                                onClick={() => deleteClient(item.id, key)}
+                                onClick={() => notify(item.id, key)}
                             >
                                 X
                             </span>

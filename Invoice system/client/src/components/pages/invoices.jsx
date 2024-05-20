@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { IconRefresh } from '@tabler/icons-react';
+import { IconRefresh } from "@tabler/icons-react";
 import { Button, Loader, Pagination } from "@mantine/core";
 import NewInvoiceModal from "../modals/newInvoice";
 import InvoiceItemsTable from "../utilsComponents/invoiceItemsTable";
@@ -17,8 +17,6 @@ export default function Invoices({ brand }) {
     const openNewInvoiceHander = () => setOpenNewInvoice(true);
     const closeNewInvoiceHander = () => setOpenNewInvoice(false);
 
-    const refreshHander = () => setRefresh(true);
-
     const deletedInvoiceHander = (deletedInvoice) => {
         const ChangeData = invoiceData.map((invoices) =>
             invoices.filter((invoice) => invoice !== deletedInvoice)
@@ -30,7 +28,7 @@ export default function Invoices({ brand }) {
             return;
         }
 
-        const tempResult = []
+        const tempResult = [];
         ChangeData.map((data) => tempResult.push(...data));
 
         setInvoiceData(PaginationData(tempResult, itemsPerPage));
@@ -96,9 +94,17 @@ export default function Invoices({ brand }) {
                             <div className="product-cell"></div>
                             <div
                                 className="product-cell"
-                                style={{ maxWidth: "80px", justifyContent: "right" }}
+                                style={{
+                                    maxWidth: "80px",
+                                    justifyContent: "right",
+                                }}
                             >
-                                <IconRefresh stroke={1} size={"18px"} className="refresh-btn" onClick={() => setRefresh(true)}/>
+                                <IconRefresh
+                                    stroke={1}
+                                    size={"18px"}
+                                    className="refresh-btn"
+                                    onClick={() => setRefresh(true)}
+                                />
                             </div>
                         </div>
 
