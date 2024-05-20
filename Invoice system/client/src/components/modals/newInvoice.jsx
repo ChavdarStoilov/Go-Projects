@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { TextInput, NumberInput, NativeSelect, Fieldset } from "@mantine/core";
 import TableNewInvoieItem from "../utilsComponents/tableNewInvoiceItem";
 
-export default function NewInvoiceModal({ open, close, refreshing }) {
+export default function NewInvoiceModal({ open, close, refreshing, adding }) {
     const [loading, setLoading] = useState(false);
     const [invoice, setInvoice] = useState([]);
     const [clients, setClients] = useState([]);
@@ -35,7 +35,7 @@ export default function NewInvoiceModal({ open, close, refreshing }) {
         api.CreateNewInvoice(invoice)
             .then((result) => {
                 if (result.status === 200) {
-                    refreshing();
+                    adding(result.data);
                 }
             })
             .catch((err) => {

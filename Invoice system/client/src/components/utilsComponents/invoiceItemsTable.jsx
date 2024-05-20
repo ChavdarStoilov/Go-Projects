@@ -6,13 +6,18 @@ import {
     Box,
     Notification,
     Transition,
+    rem
 } from "@mantine/core";
+import { IconCheck } from '@tabler/icons-react';
 import { useState } from "react";
 import InvoiceTemplate from "./invoiceTemplate";
 import * as api from "../../api/data";
 
 export default function InvoiceItemsTable({ invoice, brand, deleteHandler }) {
     const [notify, setNofity] = useState(false);
+    const checkIcon = <IconCheck style={{ width: rem(20), height: rem(20) }} />;
+
+
     const [notifyLoader, setNofityLoader] = useState({
         status: false,
         title: "Are you sure?",
@@ -72,6 +77,7 @@ export default function InvoiceItemsTable({ invoice, brand, deleteHandler }) {
                         style={styles}
                         loading={notifyLoader.status}
                         onClose={() => setNofity(false)}
+                        icon={notifyLoader.title === "All good!" && checkIcon}
                     >
                         {notifyLoader.message === "Default" ? (
                             <Box

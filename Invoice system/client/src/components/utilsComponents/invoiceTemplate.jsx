@@ -5,6 +5,8 @@ import { useEffect, useState } from "react";
 export default function InvoiceTemplate({ invoiceData, brand }) {
     const [Items, setItems] = useState();
     const [loader, setLoader] = useState(true);
+    const checkIcon = <IconCheck style={{ width: rem(20), height: rem(20) }} />;
+    
     const total  = Items && Items.map(item => item.amount).reduce((a, b) => a + b)
 
     useEffect(() => {

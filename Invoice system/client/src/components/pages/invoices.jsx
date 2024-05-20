@@ -32,6 +32,11 @@ export default function Invoices({ brand }) {
         setInvoiceData(ChangeData);
     };
 
+    const addNewInvoice = (data) => {
+        invoiceData.map((invoiceRow, key) => key === invoiceData.length  && invoiceRow.length + 1 <= itemsPerPage ? invoiceRow.push(data) : invoiceData.push([data]))
+        // setInvoiceData([invoiceData, ...data]);
+    };
+
     useEffect(() => {
         api.GetAllInvoices()
             .then((result) => {
@@ -61,6 +66,7 @@ export default function Invoices({ brand }) {
                             open={openNewInvoice}
                             close={closeNewInvoiceHander}
                             refreshing={refreshHander}
+                            adding={addNewInvoice}
                         />
                     )}
                     <div className="app-content-header">
