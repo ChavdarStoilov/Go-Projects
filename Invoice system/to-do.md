@@ -14,6 +14,7 @@
     - &#x2611; Page for presenting all invoices from the database via the REST API
     - &#x2611; Functionality for creating invoices from the FE and sending them to the database via the REST API
     - &#x2611; Functionality for deleting invoices from the FE and sending the requests to the database via the REST API
+    - &#x2611; Notify system functionality
 5. &#x2611; Create a Go REST API app for Customers
     - &#x2611; Implement CRUD operations for Customers
         - &#x2611; Implement REST API to create customers in the database
@@ -25,5 +26,6 @@
     - &#x2611; Functionality for creating customers from the FE and sending them to the database via the REST API
     - &#x2611; Functionality for deleting customers from the FE and sending the requests to the database via the REST API
     - &#x2611; Functionality for updating customers from the FE and sending the changes to the database via the REST API
+      &#x2611; Notify system functionality
 7. &#x2610; Create Docker Compose to build containers
     - &#x2610; Write a script to run apps one by one
