@@ -66,12 +66,12 @@ function App() {
                             <Route
                                 exact
                                 path="invoices/"
-                                element={<Invoices brand={brandData.brandData}/>}
+                                element={brandData.brandData  && <Invoices brand={brandData.brandData}/>}
                             />
                             <Route
                                 exact
                                 path="clients/"
-                                element={<Clients />}
+                                element={brandData.brandData  && <Clients />}
                             />
                         </Routes>
                     </div>

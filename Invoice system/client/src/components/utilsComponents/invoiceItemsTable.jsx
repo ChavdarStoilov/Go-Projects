@@ -13,16 +13,18 @@ import { useState } from "react";
 import InvoiceTemplate from "./invoiceTemplate";
 import * as api from "../../api/data";
 
+const defaultMsg = {
+    status: false,
+    title: "Are you sure?",
+    message: "Default",
+}
+
 export default function InvoiceItemsTable({ invoice, brand, deleteHandler }) {
     const [notify, setNofity] = useState(false);
     const checkIcon = <IconCheck style={{ width: rem(20), height: rem(20) }} />;
 
 
-    const [notifyLoader, setNofityLoader] = useState({
-        status: false,
-        title: "Are you sure?",
-        message: "Default",
-    });
+    const [notifyLoader, setNofityLoader] = useState(defaultMsg);
 
     const Statuses = {
         active: "yellow",
@@ -45,6 +47,7 @@ export default function InvoiceItemsTable({ invoice, brand, deleteHandler }) {
                         status: false,
                         title: "All good!",
                         message: "Record deleted successfully!",
+                        color: "green",
                     });
 
                     deleteHandler(invoice[key]);
@@ -56,7 +59,8 @@ export default function InvoiceItemsTable({ invoice, brand, deleteHandler }) {
             .finally(() => {
                 setTimeout(() => {
                     setNofity(false);
-                }, 800);
+                    setNofityLoader(defaultMsg);
+                }, 1200);
             });
     };
 
@@ -70,7 +74,7 @@ export default function InvoiceItemsTable({ invoice, brand, deleteHandler }) {
             >
                 {(styles) => (
                     <Notification
-                        color="red"
+                        color={notifyLoader.title === "All good!" ? notifyLoader.color : "red"}
                         title={notifyLoader.title}
                         className="deleteNofify"
                         radius="md"
