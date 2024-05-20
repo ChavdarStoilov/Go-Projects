@@ -484,3 +484,17 @@ body {
   right: 10px !important;
   width: 400px !important;
 }
+
+.refresh-btn {
+  cursor: pointer; 
+  transition: 500ms linear all;
+
+
+}
+.refresh-btn:hover {
+  rotate: 160deg;
+}
+
+
+
+

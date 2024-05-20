@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { IconRefresh } from '@tabler/icons-react';
 import { Button, Loader, Pagination } from "@mantine/core";
 import NewInvoiceModal from "../modals/newInvoice";
 import InvoiceItemsTable from "../utilsComponents/invoiceItemsTable";
@@ -95,8 +96,10 @@ export default function Invoices({ brand }) {
                             <div className="product-cell"></div>
                             <div
                                 className="product-cell"
-                                style={{ maxWidth: "80px" }}
-                            ></div>
+                                style={{ maxWidth: "80px", justifyContent: "right" }}
+                            >
+                                <IconRefresh stroke={1} size={"18px"} className="refresh-btn"/>
+                            </div>
                         </div>
 
                         <InvoiceItemsTable
