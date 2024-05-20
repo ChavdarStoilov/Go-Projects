@@ -1,14 +1,6 @@
-import {
-    Badge,
-    Button,
-    NumberFormatter,
-    Modal,
-    Box,
-    Notification,
-    Transition,
-    rem
-} from "@mantine/core";
-import { IconCheck } from '@tabler/icons-react';
+import { Badge, Button, NumberFormatter, Modal, Box, rem } from "@mantine/core";
+import { IconQuestionMark, IconCheck } from "@tabler/icons-react";
+import { notifications } from "@mantine/notifications";
 import { useState } from "react";
 import InvoiceTemplate from "./invoiceTemplate";
 import * as api from "../../api/data";
@@ -17,97 +9,83 @@ const defaultMsg = {
     status: false,
     title: "Are you sure?",
     message: "Default",
-}
+};
 
 export default function InvoiceItemsTable({ invoice, brand, deleteHandler }) {
-    const [notify, setNofity] = useState(false);
-    const checkIcon = <IconCheck style={{ width: rem(20), height: rem(20) }} />;
-
-
-    const [notifyLoader, setNofityLoader] = useState(defaultMsg);
+    const [opened, setOpen] = useState(false);
 
     const Statuses = {
         active: "yellow",
         completed: "green",
         rejected: "red",
     };
-    const [opened, setOpen] = useState(false);
 
-    const deleteInvoice = (id, key) => {
-        setNofityLoader({
-            status: true,
-            title: "Loading...",
-            message: "Record deletion starting...",
+    const notify = (id, key) => {
+        const idNotify = notifications.show({
+            title: "Are you sure you want to delete it!",
+            color: "red",
+            icon: <IconQuestionMark />,
+
+            message: (
+                <>
+                    <Box
+                        style={{
+                            display: "flex",
+                            gap: "20px",
+                            marginTop: "20px",
+                            justifyContent: "center",
+                        }}
+                    >
+                        <Button
+                            onClick={() => deleteInvoice(id, key, idNotify)}
+                        >
+                            Yes
+                        </Button>
+                        <Button onClick={() => notifications.hide(idNotify)}>
+                            No
+                        </Button>
+                    </Box>
+                </>
+            ),
+        });
+    };
+
+    const deleteInvoice = (id, key, idNotify) => {
+        notifications.update({
+            id: idNotify,
+            title: "Deleting record!",
+            loading: true,
+            autoClose: false,
+            color: "#2187df",
+            message: "Deleting record starting, please wait...",
         });
 
         api.DeleteInvoice(id)
             .then((result) => {
                 if (result.status === 200 && result.data === "Deleted") {
-                    setNofityLoader({
-                        status: false,
-                        title: "All good!",
-                        message: "Record deleted successfully!",
-                        color: "green",
-                    });
-
                     deleteHandler(invoice[key]);
+                    notifications.update({
+                        id: idNotify,
+                        title: "Deleting finished!",
+                        loading: false,
+                        autoClose: true,
+                        color: "green",
+                        icon: (
+                            <IconCheck
+                                style={{ width: rem(18), height: rem(18) }}
+                            />
+                        ),
+                        message: "Record was deleted successfully!",
+                    });
                 }
             })
             .catch((error) => {
                 console.log(error);
-            })
-            .finally(() => {
-                setTimeout(() => {
-                    setNofity(false);
-                    setNofityLoader(defaultMsg);
-                }, 1200);
             });
     };
 
     return (
         <>
-            <Transition
-                mounted={notify[0]}
-                transition="slide-left"
-                duration={400}
-                timingFunction="ease"
-            >
-                {(styles) => (
-                    <Notification
-                        color={notifyLoader.title === "All good!" ? notifyLoader.color : "red"}
-                        title={notifyLoader.title}
-                        className="deleteNofify"
-                        radius="md"
-                        style={styles}
-                        loading={notifyLoader.status}
-                        onClose={() => setNofity(false)}
-                        icon={notifyLoader.title === "All good!" && checkIcon}
-                    >
-                        {notifyLoader.message === "Default" ? (
-                            <Box
-                                style={{
-                                    display: "flex",
-                                    gap: "20px",
-                                    marginTop: "20px",
-                                }}
-                            >
-                                <Button
-                                    onClick={() =>
-                                        deleteInvoice(notify[1], notify[2])
-                                    }
-                                >
-                                    Yes
-                                </Button>
-                                <Button onClick={() => setNofity(false)}>
-                                    No
-                                </Button>
-                            </Box>
-                        ) : (
-                            notifyLoader.message
-                        )}
-                    </Notification>
-                )}
-            </Transition>
             {opened[0] && (
                 <Modal
                     opened={opened[0]}
@@ -175,7 +153,7 @@ export default function InvoiceItemsTable({ invoice, brand, deleteHandler }) {
                             <span
                                 style={{ cursor: "pointer", color: "red" }}
                                 onClick={() =>
-                                    setNofity([true, item.invoice_id, key])
+                                    notify(item.invoice_id, key)
                                 }
                             >
                                 X
