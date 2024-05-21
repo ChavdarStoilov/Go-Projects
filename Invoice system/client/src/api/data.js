@@ -1,8 +1,8 @@
 import * as request from './requester'
 
-const BrandBaseUrl = 'http://127.0.0.1:8882/'
-const ClientsBaseUrl =  'http://127.0.0.1:8881/'
-const InvoiceBaseUrl = 'http://127.0.0.1:8883/'
+const BrandBaseUrl = 'http://localhost:8882/'
+const ClientsBaseUrl =  'http://localhost:8881/'
+const InvoiceBaseUrl = 'http://localhost:8883/'
 
 
 // Geting data

@@ -12,7 +12,7 @@ const request = async (method, url, data) => {
         if (method === 'GET') {
             builderRequest = fetch(url, {
                 headers: {
-                    'Authorization': token,
+                    // 'Authorization': token,
                     'Content-Type': 'application/json',
                 }
             });
@@ -22,7 +22,7 @@ const request = async (method, url, data) => {
                 method,
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': token,
+                    // 'Authorization': token,
         
                 },
                 body: JSON.stringify(data),
