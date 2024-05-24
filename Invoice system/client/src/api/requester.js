@@ -23,17 +23,21 @@ const request = async (method, url, data) => {
                 headers: {
                     'Content-Type': 'application/json',
                     // 'Authorization': token,
-        
+
                 },
                 body: JSON.stringify(data),
             });
         }
 
         const response = await builderRequest;
+        if (response.status === 200) {
+            const result = await response.json();
+            return { data: result, status: response.status }
 
-        const result = await response.json();
+        }
 
-        return {data: result, status: response.status}
+        return { data: response.statusText, status: response.status }
+
     } catch (err) {
         return err
     }

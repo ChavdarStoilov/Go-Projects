@@ -35,3 +35,10 @@ export const DeleteInvoice = async (id) => request.del(`${InvoiceBaseUrl}delete?
 // Update in db
 
 export const UpdateClient = async (data) => request.put(`${ClientsBaseUrl}update/`, data)
+
+
+// Error Request Handler
+
+
+export const ErrorHandlerBrand = async (data) => request.post(`${BrandBaseUrl}error/`, data)
+export const ErrorHandlerInvoice = async (data) => request.post(`${InvoiceBaseUrl}error/`, data)
