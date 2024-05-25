@@ -19,3 +19,6 @@
 
 # Go workspace file
 go.work
+Invoice system/server/BrandData/brandService
+Invoice system/server/Clients/clientService
+Invoice system/server/Invoices/invoiceService
