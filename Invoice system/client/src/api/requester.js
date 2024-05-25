@@ -30,16 +30,18 @@ const request = async (method, url, data) => {
         }
 
         const response = await builderRequest;
+
         if (response.status === 200) {
             const result = await response.json();
             return { data: result, status: response.status }
 
         }
 
+
         return { data: response.statusText, status: response.status }
 
     } catch (err) {
-        return err
+        return { data: err, status: 500 }
     }
 };
 

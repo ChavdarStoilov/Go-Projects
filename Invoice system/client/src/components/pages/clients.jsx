@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import { Button, Loader, Pagination } from "@mantine/core";
+import { Button, Loader, Pagination, rem } from "@mantine/core";
 import { IconRefresh } from "@tabler/icons-react";
-
+import { notifications } from "@mantine/notifications";
+import { IconExclamationMark } from "@tabler/icons-react";
 import ClientsItemsTable from "../utilsComponents/clientsItemsTable";
 import * as api from "../../api/data";
 import NewClientsModal from "../modals/newClients";
@@ -65,6 +66,19 @@ export default function Clients() {
                             PaginationData(result.data, itemsPerPage)
                         );
                     }
+                } else if (result.status === 500) {
+                    notifications.show({
+                        loading: false,
+                        autoClose: true,
+                        title: "Something went wrong..",
+                        message: "Please try again or contact your vendor!",
+                        color: "yellow",
+                        icon: (
+                            <IconExclamationMark
+                                style={{ width: rem(18), height: rem(18) }}
+                            />
+                        ),
+                    });
                 }
             })
             .catch((error) => {

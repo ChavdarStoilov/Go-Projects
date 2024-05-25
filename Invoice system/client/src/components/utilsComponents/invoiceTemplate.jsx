@@ -1,12 +1,13 @@
 import * as api from "../../api/data";
-import { Table, Box, Loader, NumberFormatter  } from "@mantine/core";
+import { Table, Box, Loader, NumberFormatter } from "@mantine/core";
 import { useEffect, useState } from "react";
 
 export default function InvoiceTemplate({ invoiceData, brand }) {
     const [Items, setItems] = useState();
     const [loader, setLoader] = useState(true);
-    
-    const total  = Items && Items.map(item => item.amount).reduce((a, b) => a + b)
+
+    const total =
+        Items && Items.map((item) => item.amount).reduce((a, b) => a + b);
 
     useEffect(() => {
         api.GetInvoiceData(invoiceData.invoice_id)
@@ -23,15 +24,29 @@ export default function InvoiceTemplate({ invoiceData, brand }) {
             });
     }, []);
 
-    const rows = Items && Items.map((element, key) => (
-        <Table.Tr key={key}>
-            <Table.Td>{element.id}</Table.Td>
-            <Table.Td>{element.items}</Table.Td>
-            <Table.Td>{element.quantity}</Table.Td>
-            <Table.Td><NumberFormatter value={element.price} suffix=" лв." thousandSeparator /></Table.Td>
-            <Table.Td><NumberFormatter value={element.amount} suffix=" лв." thousandSeparator /></Table.Td>
-        </Table.Tr>
-    ));
+    const rows =
+        Items &&
+        Items.map((element, key) => (
+            <Table.Tr key={key}>
+                <Table.Td>{element.id}</Table.Td>
+                <Table.Td>{element.items}</Table.Td>
+                <Table.Td>{element.quantity}</Table.Td>
+                <Table.Td>
+                    <NumberFormatter
+                        value={element.price}
+                        suffix=" лв."
+                        thousandSeparator
+                    />
+                </Table.Td>
+                <Table.Td>
+                    <NumberFormatter
+                        value={element.amount}
+                        suffix=" лв."
+                        thousandSeparator
+                    />
+                </Table.Td>
+            </Table.Tr>
+        ));
 
     return (
         <>
@@ -46,10 +61,9 @@ export default function InvoiceTemplate({ invoiceData, brand }) {
                     <div className="invoice-details">
                         <div className="span4">
                             <p>
-                                <strong>
-                                    {brand[0].name}
-                                </strong>
+                                <strong>Company name:</strong> {brand[0].name}
                                 <br />
+                                <strong>Company owner:</strong>{" "}
                                 {brand[0].address}
                             </p>
                         </div>
@@ -60,19 +74,19 @@ export default function InvoiceTemplate({ invoiceData, brand }) {
                                         <td className="pull-right">
                                             <strong>Customer #</strong>
                                         </td>
-                                        <td>21398324797234</td>
+                                        <td>{Items[0].first_name} {Items[0].last_name}</td>
                                     </tr>
                                     <tr>
                                         <td className="pull-right">
                                             <strong>Invoice #</strong>
                                         </td>
-                                        <td>2340</td>
+                                        <td>{Items[0].invoice_id}</td>
                                     </tr>
                                     <tr>
                                         <td className="pull-right">
                                             <strong>Date</strong>
                                         </td>
-                                        <td>10-08-2013</td>
+                                        <td>{Items[0].date.split(" ")[0]}</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -98,8 +112,15 @@ export default function InvoiceTemplate({ invoiceData, brand }) {
                             </Table>
                         </div>
                     </div>
-                    <div style={{textAlign: "right", marginRight: '20px'}}>
-                        <strong>Total: <NumberFormatter value={total} suffix=" лв." thousandSeparator /></strong>
+                    <div style={{ textAlign: "right", marginRight: "20px" }}>
+                        <strong>
+                            Total:{" "}
+                            <NumberFormatter
+                                value={total}
+                                suffix=" лв."
+                                thousandSeparator
+                            />
+                        </strong>
                     </div>
                     <div className="row">
                         <div className="span8 well invoice-thank">
@@ -119,13 +140,16 @@ export default function InvoiceTemplate({ invoiceData, brand }) {
                             <strong>Phone:</strong>+91-124-111111
                         </div>
                         <div className="span3">
-                            <strong>Email:</strong>{" "}
-                            <a>{brand[0].mail}</a>
+                            <strong>Email:</strong> <a>{brand[0].mail}</a>
                         </div>
                     </Box>
                 </>
             ) : (
-                <Loader color="blue"  type="dots" style={{margin: "auto", height: "458px"}}/>
+                <Loader
+                    color="blue"
+                    type="dots"
+                    style={{ margin: "auto", height: "458px" }}
+                />
             )}
         </>
     );

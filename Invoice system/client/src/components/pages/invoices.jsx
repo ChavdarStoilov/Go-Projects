@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { IconRefresh } from "@tabler/icons-react";
-import { Button, Loader, Pagination } from "@mantine/core";
+import { notifications } from "@mantine/notifications";
+import { IconExclamationMark } from '@tabler/icons-react';
+import { Button, Loader, Pagination, rem } from "@mantine/core";
 import NewInvoiceModal from "../modals/newInvoice";
 import InvoiceItemsTable from "../utilsComponents/invoiceItemsTable";
 import * as api from "../../api/data";
@@ -27,6 +29,19 @@ export default function Invoices({ brand }) {
                             itemsPerPage
                         )
                     );
+                } else if (result.status === 500) {
+                    notifications.show({
+                        loading: false,
+                        autoClose: true,
+                        title: "Something went wrong..",
+                        message: "Please try again or contact your vendor!",
+                        color: "yellow",
+                        icon: (
+                            <IconExclamationMark
+                                style={{ width: rem(18), height: rem(18) }}
+                            />
+                        ),
+                    });
                 }
             })
             .catch((error) => {
@@ -67,12 +82,12 @@ export default function Invoices({ brand }) {
     };
 
     const UpdatedStatus = (newInvoice) => {
-
         const ChangeData = invoiceData.map((invoices) =>
-            invoices.map((oldInvoice) => oldInvoice.id == newInvoice.id ? newInvoice : oldInvoice)
+            invoices.map((oldInvoice) =>
+                oldInvoice.id == newInvoice.id ? newInvoice : oldInvoice
+            )
         );
         setInvoiceData(ChangeData);
-
     };
 
     return (
