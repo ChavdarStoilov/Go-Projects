@@ -27,6 +27,7 @@ CREATE TABLE IF NOT EXISTS Invoices (
     Amount float,
     owner int,
     status int,
+    date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ,
     PRIMARY KEY (ID)
 );
 
