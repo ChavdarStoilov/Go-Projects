@@ -35,7 +35,7 @@ export const DeleteInvoice = async (id) => request.del(`${InvoiceBaseUrl}delete?
 // Update in db
 
 export const UpdateClient = async (data) => request.put(`${ClientsBaseUrl}update/`, data)
-
+export const UpdateInvoiceStatus = async (id, stat) => request.put(`${InvoiceBaseUrl}update-status?id=${id}&stat=${stat}`)
 
 // Error Request Handler
 
