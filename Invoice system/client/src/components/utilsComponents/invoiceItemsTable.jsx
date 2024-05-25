@@ -1,23 +1,32 @@
-import { Badge, Button, NumberFormatter, Modal, Box, rem } from "@mantine/core";
+import {
+    Badge,
+    Button,
+    NumberFormatter,
+    Modal,
+    Box,
+    rem,
+    NativeSelect,
+    Popover,
+} from "@mantine/core";
 import { IconQuestionMark, IconCheck } from "@tabler/icons-react";
 import { notifications } from "@mantine/notifications";
 import { useState } from "react";
 import InvoiceTemplate from "./invoiceTemplate";
 import * as api from "../../api/data";
 
-const defaultMsg = {
-    status: false,
-    title: "Are you sure?",
-    message: "Default",
-};
-
-export default function InvoiceItemsTable({ invoice, brand, deleteHandler }) {
+export default function InvoiceItemsTable({
+    invoice,
+    brand,
+    deleteHandler,
+    updateHandler,
+}) {
     const [opened, setOpen] = useState(false);
+    const [openedStatus, setOpenedStatus] = useState(null);
 
     const Statuses = {
-        active: "yellow",
-        completed: "green",
-        rejected: "red",
+        Active: { id: "1", color: "yellow" },
+        Completed: { id: "2", color: "green" },
+        Rejected: { id: "3", color: "red" },
     };
 
     const notify = (id, key) => {
@@ -84,6 +93,46 @@ export default function InvoiceItemsTable({ invoice, brand, deleteHandler }) {
             });
     };
 
+    const ChangeStatus = (e, id) => {
+        const status_id = e.target.value;
+
+        const updateNofity = notifications.show({
+            title: "Updating status!",
+            loading: true,
+            autoClose: false,
+            color: "#2187df",
+            message: "Updating status starting, please wait...",
+        });
+
+        api.UpdateInvoiceStatus(id, status_id)
+            .then((response) => {
+                if (response.status == 200) {
+                    updateHandler(response.data);
+                    setOpenedStatus(null);
+                    notifications.update({
+                        id: updateNofity,
+                        title: "Updating finished!",
+                        loading: false,
+                        autoClose: true,
+                        color: "green",
+                        icon: (
+                            <IconCheck
+                                style={{ width: rem(18), height: rem(18) }}
+                            />
+                        ),
+                        message: "Statys was update successfully!",
+                    });
+                }
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    };
+
+    const handleBadgeClick = (key) => {
+        setOpenedStatus(key); // Актуализира ID на текущо отворения Popover
+    };
+
     return (
         <>
             {opened[0] && (
@@ -115,13 +164,45 @@ export default function InvoiceItemsTable({ invoice, brand, deleteHandler }) {
                             <span>{item.invoice_id}</span>
                         </div>
                         <div className="product-cell status-cell">
-                            <Badge
-                                variant="dot"
-                                color={Statuses[item.status]}
-                                size="md"
+                            <Popover
+                                width={300}
+                                position="bottom"
+                                withArrow
+                                shadow="md"
+                                id={`popover-${key}`}
+                                opened={openedStatus === key} // Отваря Popover само за текущия запис
+                                onChange={() => setOpenedStatus(null)} // Затваря Popover, когато се кликне извън него
                             >
-                                {item.status}
-                            </Badge>
+                                <Popover.Target>
+                                    <Badge
+                                        variant="dot"
+                                        color={Statuses[item.status]['color']}
+                                        size="md"
+                                        style={{ cursor: "pointer" }}
+                                        onClick={() => handleBadgeClick(key)} // Отваря Popover за конкретния Badge
+                                    >
+                                        {item.status}
+                                    </Badge>
+                                </Popover.Target>
+                                <Popover.Dropdown>
+                                    <NativeSelect
+                                        label="Select status"
+                                        data={[
+                                            { label: "Active", value: "1" },
+                                            { label: "Completed", value: "2" },
+                                            { label: "Rejected", value: "3" },
+                                        ]}
+                                        onChange={(e) =>
+                                            ChangeStatus(
+                                                e,
+                                                item.invoice_id,
+                                                key
+                                            )
+                                        }
+                                        value={Statuses[item.status]["id"]}
+                                    />
+                                </Popover.Dropdown>
+                            </Popover>
                         </div>
                         <div className="product-cell">
                             <span>
@@ -152,9 +233,7 @@ export default function InvoiceItemsTable({ invoice, brand, deleteHandler }) {
                         >
                             <span
                                 style={{ cursor: "pointer", color: "red" }}
-                                onClick={() =>
-                                    notify(item.invoice_id, key)
-                                }
+                                onClick={() => notify(item.invoice_id, key)}
                             >
                                 X
                             </span>

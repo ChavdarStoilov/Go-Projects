@@ -17,6 +17,27 @@ export default function Invoices({ brand }) {
     const openNewInvoiceHander = () => setOpenNewInvoice(true);
     const closeNewInvoiceHander = () => setOpenNewInvoice(false);
 
+    useEffect(() => {
+        api.GetAllInvoices()
+            .then((result) => {
+                if (result.status === 200) {
+                    setInvoiceData(
+                        PaginationData(
+                            result.data.length && result.data,
+                            itemsPerPage
+                        )
+                    );
+                }
+            })
+            .catch((error) => {
+                console.log(error);
+            })
+            .finally(() => {
+                setLoader(false);
+                setRefresh(false);
+            });
+    }, [refresh]);
+
     const deletedInvoiceHander = (deletedInvoice) => {
         const ChangeData = invoiceData.map((invoices) =>
             invoices.filter((invoice) => invoice !== deletedInvoice)
@@ -45,26 +66,14 @@ export default function Invoices({ brand }) {
         setInvoiceData(invoiceData);
     };
 
-    useEffect(() => {
-        api.GetAllInvoices()
-            .then((result) => {
-                if (result.status === 200) {
-                    setInvoiceData(
-                        PaginationData(
-                            result.data.length && result.data,
-                            itemsPerPage
-                        )
-                    );
-                }
-            })
-            .catch((error) => {
-                console.log(error);
-            })
-            .finally(() => {
-                setLoader(false);
-                setRefresh(false);
-            });
-    }, [refresh]);
+    const UpdatedStatus = (newInvoice) => {
+
+        const ChangeData = invoiceData.map((invoices) =>
+            invoices.map((oldInvoice) => oldInvoice.id == newInvoice.id ? newInvoice : oldInvoice)
+        );
+        setInvoiceData(ChangeData);
+
+    };
 
     return (
         <>
@@ -115,6 +124,7 @@ export default function Invoices({ brand }) {
                             }
                             brand={brand}
                             deleteHandler={deletedInvoiceHander}
+                            updateHandler={UpdatedStatus}
                         />
                     </div>
                     <Pagination
