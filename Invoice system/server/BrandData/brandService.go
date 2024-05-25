@@ -168,8 +168,6 @@ func errorHandlerLog(w http.ResponseWriter, r *http.Request) {
 			panic(err)
 		}
 
-		fmt.Println(data.Description)
-
 		db = connectDB()
 
 		rows, err := db.Query(fmt.Sprintf("Insert into error_handler (description) Values ('%v')", data.Description))

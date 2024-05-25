@@ -20,8 +20,11 @@ type InvoiceItems struct {
 	Price      float64 `json:"price"`
 	Amount     float64 `json:"amount"`
 	Status     int     `json:"status"`
+	FirstName  string  `json:"first_name"`
+	LastName   string  `json:"last_name"`
 	Invoice_id int64   `json:"invoice_id"`
 	Owner      int64   `json:"owner"`
+	DateField  string  `json:"date"`
 }
 
 type InvoiceFromDB struct {
@@ -233,7 +236,11 @@ func GetinvoiceData(w http.ResponseWriter, r *http.Request) {
 
 		db = connectDB()
 
-		sql := fmt.Sprintf("select i.ID, i.invoice_id, i.Items, i.Quantity, i.Price, i.Amount from Invoices i where i.invoice_id = %d;", intId)
+		sql := fmt.Sprintf(`
+			select i.id, i.invoice_id, i.Items, i.Quantity, i.Price, i.Amount, c.first_name, c.last_name, i.date
+				from Invoices i 
+				Inner join Clients c on i.owner = c.id 
+				where invoice_id = %d;`, intId)
 
 		rows, err := db.Query(sql)
 		if err != nil {
@@ -246,8 +253,9 @@ func GetinvoiceData(w http.ResponseWriter, r *http.Request) {
 		var tempData []InvoiceItems
 		for rows.Next() {
 			var item InvoiceItems
-			if err := rows.Scan(&item.ID, &item.Invoice_id, &item.Item, &item.Quantity, &item.Price, &item.Amount); err != nil {
+			if err := rows.Scan(&item.ID, &item.Invoice_id, &item.Item, &item.Quantity, &item.Price, &item.Amount, &item.FirstName, &item.LastName, &item.DateField); err != nil {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
 			}
 			tempData = append(tempData, item)
 		}
@@ -340,8 +348,6 @@ func errorHandlerLog(w http.ResponseWriter, r *http.Request) {
 			panic(err)
 		}
 
-		fmt.Println(data.Description)
-
 		db = connectDB()
 
 		rows, err := db.Query(fmt.Sprintf("Insert into error_handler (description) Values ('%v')", data.Description))
@@ -360,6 +366,74 @@ func errorHandlerLog(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func UpdateStatusInvoice(w http.ResponseWriter, r *http.Request) {
+	if r.Method == "PUT" || r.Method == "OPTIONS" {
+		var port = strings.Split(r.Header.Get("Origin"), ":")
+
+		if port[2] == "81" {
+			w.Header().Add("Access-Control-Allow-Origin", "http://localhost:81")
+		} else if port[2] == "5173" {
+			w.Header().Add("Access-Control-Allow-Origin", "http://localhost:5173")
+
+		}
+
+		w.Header().Add("Access-Control-Allow-Headers", "*")
+		w.Header().Add("Access-Control-Allow-Methods", "PUT")
+
+		w.Header().Set("Content-Type", "application/json")
+
+		if r.Method == "OPTIONS" {
+			w.WriteHeader(http.StatusOK)
+			return
+		}
+
+		id := r.URL.Query().Get("id")
+		stat := r.URL.Query().Get("stat")
+
+		intId, err := strconv.ParseInt(id, 10, 64)
+		if err != nil {
+			fmt.Println(err)
+		}
+		intStat, err := strconv.ParseInt(stat, 10, 64)
+		if err != nil {
+			fmt.Println(err)
+		}
+
+		db = connectDB()
+
+		rows, err := db.Query(fmt.Sprintf("Update Invoices set status = %d where invoice_id = %d;", intStat, intId))
+
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		defer rows.Close()
+
+		var tempInvoiceData InvoiceFromDB
+
+		invoice := db.QueryRow(fmt.Sprintf(`
+		select i.id, i.invoice_id, i.Items, i.Quantity, sum(i.Amount), s.status, c.first_name, c.last_name 
+		from Invoices i 
+		Inner join status_type s on i.status = s.id 
+		Inner join Clients c on i.owner = c.id 
+		where invoice_id = %d 
+		GROUP BY i.invoice_id;`, intId)).Scan(&tempInvoiceData.ID, &tempInvoiceData.Invoice_id, &tempInvoiceData.Item, &tempInvoiceData.Quantity, &tempInvoiceData.Amount, &tempInvoiceData.Status, &tempInvoiceData.FirstName, &tempInvoiceData.LastName)
+
+		if invoice != nil {
+			http.Error(w, invoice.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		db.Close()
+		json.NewEncoder(w).Encode(tempInvoiceData)
+		w.WriteHeader(http.StatusCreated)
+
+		return
+
+	}
+
+}
 func main() {
 
 	http.HandleFunc("/", DisplayAllInvoices)
@@ -367,6 +441,7 @@ func main() {
 	http.HandleFunc("/get_invoice", GetinvoiceData)
 	http.HandleFunc("/delete", DeleteInvoice)
 	http.HandleFunc("/error/", errorHandlerLog)
+	http.HandleFunc("/update-status", UpdateStatusInvoice)
 
 	log.Fatal(http.ListenAndServe(":8883", nil))
 }
