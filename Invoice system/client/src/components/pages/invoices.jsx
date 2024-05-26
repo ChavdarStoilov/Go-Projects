@@ -1,12 +1,12 @@
-// import { useEffect, useState } from "react";
-// import { IconRefresh } from "@tabler/icons-react";
-// import { notifications } from "@mantine/notifications";
-// import { IconExclamationMark } from "@tabler/icons-react";
-// import { Button, Loader, Pagination, rem } from "@mantine/core";
-// import NewInvoiceModal from "../modals/newInvoice";
-// import InvoiceItemsTable from "../utilsComponents/invoiceItemsTable";
-// import * as api from "../../api/data";
-// import PaginationData from "../utilsComponents/paginations";
+import { useEffect, useState } from "react";
+import { IconRefresh } from "@tabler/icons-react";
+import { notifications } from "@mantine/notifications";
+import { IconExclamationMark } from "@tabler/icons-react";
+import { Button, Loader, Pagination, rem } from "@mantine/core";
+import NewInvoiceModal from "../modals/newInvoice";
+import InvoiceItemsTable from "../utilsComponents/invoiceItemsTable";
+import * as api from "../../api/data";
+import PaginationData from "../utilsComponents/paginations";
 
 export default function Invoices({ brand }) {
     const [invoiceData, setInvoiceData] = useState([]);
