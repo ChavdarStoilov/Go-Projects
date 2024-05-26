@@ -35,7 +35,7 @@ var db *sql.DB
 
 func connectDB() *sql.DB {
 	// Change username / password  / DB name
-	connectionString := "test:qweqwe__@tcp(localhost:3306)/InvoiceSystem"
+	connectionString := "test:qweqwe__@tcp(db:3306)/InvoiceSystem"
 	db, err := sql.Open("mysql", connectionString)
 	if err != nil {
 		log.Fatal(err)
@@ -94,6 +94,9 @@ func DisplayBrandData(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(TempData)
 		db.Close()
 		return
+	} else {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		return
 	}
 }
 
@@ -138,6 +141,9 @@ func CreateBrand(w http.ResponseWriter, r *http.Request) {
 
 		return
 
+	} else {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		return
 	}
 }
 
@@ -181,6 +187,10 @@ func errorHandlerLog(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(data)
 		w.WriteHeader(http.StatusCreated)
 
+		return
+
+	} else {
+		w.WriteHeader(http.StatusMethodNotAllowed)
 		return
 
 	}

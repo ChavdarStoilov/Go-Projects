@@ -27,7 +27,7 @@ var db *sql.DB
 
 func connectDB() *sql.DB {
 	// Change username / password  / DB name
-	connectionString := "test:qweqwe__@tcp(localhost:3306)/InvoiceSystem"
+	connectionString := "test:qweqwe__@tcp(db:3306)/InvoiceSystem"
 	db, err := sql.Open("mysql", connectionString)
 	if err != nil {
 		log.Fatal(err)
@@ -81,6 +81,9 @@ func DisplayAllClients(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		json.NewEncoder(w).Encode(tempData)
 		db.Close()
+	} else {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		return
 	}
 
 }
@@ -130,6 +133,9 @@ func CreateNewClient(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(data)
 		w.WriteHeader(http.StatusCreated)
 
+	} else {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		return
 	}
 
 }
@@ -200,6 +206,9 @@ func UpdateClient(w http.ResponseWriter, r *http.Request) {
 
 		json.NewEncoder(w).Encode("Updated")
 
+	} else {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		return
 	}
 }
 
@@ -256,6 +265,9 @@ func DeleteClient(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		json.NewEncoder(w).Encode("Deleted")
 
+	} else {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		return
 	}
 
 }
@@ -302,6 +314,9 @@ func errorHandlerLog(w http.ResponseWriter, r *http.Request) {
 
 		return
 
+	} else {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		return
 	}
 }
 

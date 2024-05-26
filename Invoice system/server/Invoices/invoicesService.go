@@ -47,7 +47,7 @@ var db *sql.DB
 
 func connectDB() *sql.DB {
 	// Change username / password  / DB name
-	connectionString := "test:qweqwe__@tcp(localhost:3306)/InvoiceSystem"
+	connectionString := "test:qweqwe__@tcp(db:3306)/InvoiceSystem"
 	db, err := sql.Open("mysql", connectionString)
 	if err != nil {
 		log.Fatal(err)
@@ -117,6 +117,9 @@ func DisplayAllInvoices(w http.ResponseWriter, r *http.Request) {
 
 		db.Close()
 
+	} else {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		return
 	}
 }
 
@@ -206,7 +209,11 @@ func CraeteNewInvoice(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusCreated)
 
 		return
+	} else {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		return
 	}
+
 }
 
 func GetinvoiceData(w http.ResponseWriter, r *http.Request) {
@@ -269,6 +276,9 @@ func GetinvoiceData(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusNoContent)
 
 		db.Close()
+	} else {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		return
 	}
 }
 
@@ -317,6 +327,9 @@ func DeleteInvoice(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		json.NewEncoder(w).Encode("Deleted")
 
+	} else {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		return
 	}
 
 }
@@ -363,6 +376,9 @@ func errorHandlerLog(w http.ResponseWriter, r *http.Request) {
 
 		return
 
+	} else {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		return
 	}
 }
 
@@ -431,6 +447,9 @@ func UpdateStatusInvoice(w http.ResponseWriter, r *http.Request) {
 
 		return
 
+	} else {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		return
 	}
 
 }
