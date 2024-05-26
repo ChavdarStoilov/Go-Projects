@@ -111,7 +111,17 @@ export default function NewInvoiceModal({ open, close, adding }) {
                         <NativeSelect
                             label="Clients"
                             required
-                            data={clients.length > 0 && clients}
+                            disabled={clients.length <= 0 ? true : false}
+                            data={
+                                clients.length > 0
+                                    ? clients
+                                    : [
+                                          {
+                                              label: "There not have clients",
+                                              value: 1,
+                                          },
+                                      ]
+                            }
                             name="owner"
                         />
 
@@ -132,7 +142,7 @@ export default function NewInvoiceModal({ open, close, adding }) {
                                 justifyContent: "space-evenly",
                             }}
                         >
-                            <Button type="submit">Add</Button>
+                            <Button type="submit" disabled={clients.length <= 0}>Add</Button>
                             <Button
                                 loading={loading}
                                 loaderProps={{ type: "dots" }}
