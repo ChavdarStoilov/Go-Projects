@@ -22,14 +22,17 @@ export default function Clients() {
 
     const addHandler = (data) => {
         const lastIdx = clientsData.length - 1;
-
-        if (clientsData[lastIdx].length + 1 <= itemsPerPage) {
+        if (clientsData.length > 0 &&clientsData[lastIdx].length + 1 <= itemsPerPage) {
             clientsData[lastIdx].push(data);
         } else {
+            if (activePage === 0) {
+                setPage(activePage + 1);
+            }
             clientsData.push([data]);
         }
 
         setClientsData(clientsData);
+
     };
 
     const updateClients = (newData) => {
