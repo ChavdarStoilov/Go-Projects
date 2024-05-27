@@ -22,3 +22,5 @@ go.work
 Invoice system/server/BrandData/brandService
 Invoice system/server/Clients/clientService
 Invoice system/server/Invoices/invoiceService
+docker-compose*
+*.tar
